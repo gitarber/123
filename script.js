@@ -210,54 +210,266 @@ function handleSearch(event) {
     }
 }
 
-// Voice Recognition Setup
-let recognition;
-let isListening = false;
+// Speech Recognition Configuration
+class SpeechRecognitionHandler {
+    constructor() {
+        this.isListening = false;
+        this.recognition = null;
+        this.voiceButton = document.getElementById('voiceButton');
+        this.searchInput = document.getElementById('searchInput');
+        this.searchTimeout = null;
+        this.countdownInterval = null;
+        this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        this.setupRecognition();
+        this.bindEvents();
+    }
 
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'sq-AL'; // Set language to Albanian
-
-    recognition.onstart = function() {
-        isListening = true;
-        voiceButton.classList.add('listening');
-    };
-
-    recognition.onend = function() {
-        isListening = false;
-        voiceButton.classList.remove('listening');
-    };
-
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        searchInput.value = transcript;
-        handleSearch(new Event('submit'));
-    };
-
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        isListening = false;
-        voiceButton.classList.remove('listening');
-    };
-}
-
-// Voice Button Event Handler
-const voiceButton = document.getElementById('voiceButton');
-const searchInput = document.getElementById('searchInput');
-
-if (voiceButton) {
-    voiceButton.addEventListener('click', () => {
-        if (!recognition) {
-            alert('Funksionaliteti i zërit nuk mbështetet në shfletuesin tuaj.');
+    setupRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            this.voiceButton.style.display = 'none';
+            console.error('Shfletuesi juaj nuk mbështet njohjen e zërit.');
             return;
         }
 
-        if (!isListening) {
-            recognition.start();
-        } else {
-            recognition.stop();
+        this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        
+        // Configure for Albanian with mobile-optimized settings
+        this.recognition.lang = 'sq-AL';
+        this.recognition.continuous = !this.isMobile; // Disable continuous on mobile
+        this.recognition.interimResults = true;
+        this.recognition.maxAlternatives = 1;
+
+        // Event handlers
+        this.recognition.onstart = this.handleStart.bind(this);
+        this.recognition.onend = this.handleEnd.bind(this);
+        this.recognition.onresult = this.handleResult.bind(this);
+        this.recognition.onerror = this.handleError.bind(this);
+        this.recognition.onnomatch = this.handleNoMatch.bind(this);
+        this.recognition.onspeechend = () => {
+            console.log('Speech ended');
+            if (this.searchInput.value.trim()) {
+                // On mobile, start countdown immediately
+                if (this.isMobile) {
+                    this.stopListening();
+                }
+                this.startCountdown();
+            }
+        };
+    }
+
+    bindEvents() {
+        if (this.voiceButton) {
+            this.voiceButton.addEventListener('click', () => {
+                if (!this.recognition) {
+                    alert('Shfletuesi juaj nuk mbështet njohjen e zërit.');
+                    return;
+                }
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            });
         }
-    });
-} 
+    }
+
+    startCountdown() {
+        // Clear any existing timeouts and intervals
+        this.clearTimers();
+        
+        let countdown = 3;
+        this.showFeedback(`Kërkimi fillon për... ${countdown}`);
+
+        this.countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                this.showFeedback(`Kërkimi fillon për... ${countdown}`);
+            }
+        }, 1000);
+
+        this.searchTimeout = setTimeout(() => {
+            this.clearTimers();
+            if (!this.isListening) {
+                handleSearch(new Event('submit'));
+            }
+        }, 3000);
+    }
+
+    clearTimers() {
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+        }
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
+    startListening() {
+        try {
+            this.clearTimers();
+            
+            // Hide keyboard on mobile
+            if (this.isMobile) {
+                this.searchInput.blur();
+            }
+            
+            this.recognition.start();
+            this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
+        } catch (error) {
+            console.error('Error starting recognition:', error);
+            this.handleError({ error: 'start-error' });
+        }
+    }
+
+    stopListening() {
+        try {
+            this.clearTimers();
+            this.recognition.stop();
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
+            
+            // Prevent keyboard from showing on mobile
+            if (this.isMobile) {
+                this.searchInput.blur();
+            }
+        } catch (error) {
+            console.error('Error stopping recognition:', error);
+        }
+    }
+
+    handleStart() {
+        this.isListening = true;
+        this.voiceButton.classList.add('listening');
+        this.searchInput.placeholder = this.isMobile ? 'Duke dëgjuar...' : 'Ju lutem flisni...';
+        
+        // Prevent keyboard from showing on mobile
+        if (this.isMobile) {
+            this.searchInput.blur();
+        }
+    }
+
+    handleEnd() {
+        this.isListening = false;
+        this.voiceButton.classList.remove('listening');
+        this.searchInput.placeholder = 'Search anything...';
+        
+        // If no result was received and no timeout is pending
+        if (!this.searchInput.value && !this.searchTimeout) {
+            this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
+        }
+        
+        // Restart recognition on mobile if still listening
+        if (this.isMobile && this.isListening) {
+            try {
+                this.recognition.start();
+            } catch (error) {
+                console.error('Error restarting recognition:', error);
+            }
+        }
+    }
+
+    handleResult(event) {
+        const results = Array.from(event.results);
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        results.forEach(result => {
+            if (result.isFinal) {
+                finalTranscript += result[0].transcript;
+            } else {
+                interimTranscript += result[0].transcript;
+            }
+        });
+
+        // Update the search input with all transcribed text
+        this.searchInput.value = finalTranscript || interimTranscript;
+    }
+
+    handleError(event) {
+        this.isListening = false;
+        this.voiceButton.classList.remove('listening');
+
+        let message = '';
+        switch (event.error) {
+            case 'no-speech':
+                message = this.isMobile ? 
+                    'Nuk u dëgjua zëri. Shtypni dhe flisni.' : 
+                    'Nuk u dëgjua asnjë zë. Ju lutem flisni më qartë dhe provoni përsëri.';
+                break;
+            case 'audio-capture':
+                message = this.isMobile ?
+                    'Kontrolloni nëse mikrofoni është i aktivizuar në celularin tuaj.' :
+                    'Nuk mund të aksesohet mikrofoni. Sigurohuni që keni një mikrofon të lidhur dhe funksional.';
+                break;
+            case 'not-allowed':
+                message = this.isMobile ?
+                    'Ju lutem lejoni përdorimin e mikrofonit në celularin tuaj.' :
+                    'Ju lutem jepni leje për përdorimin e mikrofonit në shfletuesin tuaj.';
+                break;
+            case 'network':
+                message = 'Problem me lidhjen në internet. Kontrolloni lidhjen tuaj dhe provoni përsëri.';
+                break;
+            case 'aborted':
+                message = 'Njohja e zërit u ndërpre. Shtypni butonin përsëri për të rifilluar.';
+                break;
+            case 'language-not-supported':
+                message = 'Gjuha shqipe nuk mbështetet në këtë shfletues. Provoni një shfletues tjetër ose përdorni tastierën.';
+                break;
+            case 'service-not-allowed':
+                message = 'Shërbimi i njohjes së zërit nuk është i disponueshëm. Provoni përsëri më vonë.';
+                break;
+            case 'start-error':
+                message = 'Pati një problem në nisjen e njohjes së zërit. Rifreskoni faqen dhe provoni përsëri.';
+                break;
+            case 'no-match':
+                message = 'Nuk arritëm të kuptojmë çfarë thatë. Ju lutem flisni më qartë dhe më ngadalë.';
+                break;
+            default:
+                message = 'Ndodhi një gabim i papritur. Ju lutem provoni përsëri ose përdorni tastierën.';
+        }
+        
+        this.showFeedback(message);
+        console.error('Speech recognition error:', event.error);
+    }
+
+    handleNoMatch() {
+        this.showFeedback('Nuk mund të njihej zëri. Ju lutem provoni përsëri.');
+    }
+
+    showFeedback(message) {
+        // Remove any existing feedback first
+        const existingFeedback = document.querySelector('.voice-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+
+        // Create a new feedback element
+        const feedback = document.createElement('div');
+        feedback.className = 'voice-feedback';
+        if (this.isMobile) {
+            feedback.className += ' mobile';
+        }
+        feedback.textContent = message;
+        
+        // Position it near the search box
+        const searchContainer = document.querySelector('.search-container');
+        searchContainer.appendChild(feedback);
+        
+        // Only auto-remove feedback if it's not a countdown message
+        if (!message.includes('Kërkimi fillon për...')) {
+            setTimeout(() => {
+                feedback.remove();
+            }, this.isMobile ? 2000 : 3000);
+        }
+    }
+}
+
+// Initialize speech recognition when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // ... existing DOMContentLoaded code ...
+    
+    // Initialize speech recognition
+    const speechHandler = new SpeechRecognitionHandler();
+}); 
