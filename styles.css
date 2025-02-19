@@ -955,7 +955,7 @@ h1 {
     min-width: 46px;
     border: none;
     border-radius: 50%;
-    background: rgba(33, 150, 243, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -966,7 +966,7 @@ h1 {
     transition: all 0.3s ease;
     padding: 0;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .voice-indicator {
@@ -983,14 +983,13 @@ h1 {
     width: 24px;
     height: 24px;
     color: #fff;
-    opacity: 1;
+    opacity: 0.8;
     transition: all 0.3s ease;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    display: block !important;
 }
 
 .voice-button:hover {
@@ -1098,43 +1097,25 @@ h1 {
         height: 38px;
         min-width: 38px;
         margin-right: 8px;
-        background: rgba(33, 150, 243, 0.3);
+        background: rgba(255, 255, 255, 0.15);
         -webkit-tap-highlight-color: transparent;
-        display: flex !important;
-        z-index: 2;
-        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .voice-indicator {
         width: 20px;
         height: 20px;
-        opacity: 1;
-        display: flex !important;
-        z-index: 3;
     }
 
     .voice-indicator svg {
         width: 20px;
         height: 20px;
         opacity: 1;
-        display: block !important;
-        color: #fff;
     }
-
-    /* iOS-specific fixes */
-    @supports (-webkit-touch-callout: none) {
-        .voice-button {
-            background: rgba(33, 150, 243, 0.4);
-        }
-        
-        .voice-button.listening {
-            background: rgba(33, 150, 243, 0.5);
-        }
-
-        .voice-indicator svg {
-            opacity: 1 !important;
-            transform: none !important;
-        }
+    
+    /* Ensure the icon is visible on iOS */
+    .voice-button:not(.listening) .voice-indicator svg {
+        opacity: 1;
+        transform: none;
     }
 
     .wave-bars {
@@ -1148,17 +1129,6 @@ h1 {
     
     .search-box {
         padding: 6px;
-    }
-
-    .voice-feedback {
-        font-size: 0.85rem;
-        padding: 6px 12px;
-        bottom: -35px;
-        max-width: 90%;
-        white-space: normal;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 10;
     }
 }
 
@@ -1215,4 +1185,50 @@ h1 {
     font-size: 0.8rem;
     padding: 6px 12px;
     background: rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 480px) {
+    .voice-button {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        margin-right: 8px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .voice-button:active {
+        transform: scale(0.95);
+    }
+    
+    .voice-indicator {
+        width: 20px;
+        height: 20px;
+    }
+
+    .voice-indicator svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .wave-bars {
+        padding: 5px;
+    }
+
+    .bar {
+        width: 1.5px;
+        height: 10px;
+    }
+    
+    .search-box {
+        padding: 6px;
+    }
+
+    .voice-feedback {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        bottom: -35px;
+        max-width: 90%;
+        white-space: normal;
+        text-align: center;
+    }
 } 
