@@ -231,13 +231,26 @@ class SpeechRecognitionHandler {
             return;
         }
 
+        // Try to use standard SpeechRecognition first, then fallback to webkit
         this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         
         // Configure for Albanian with mobile-optimized settings
         this.recognition.lang = 'sq-AL';
-        this.recognition.continuous = !this.isMobile; // Disable continuous on mobile
+        this.recognition.continuous = false; // Set to false for better iOS compatibility
         this.recognition.interimResults = true;
         this.recognition.maxAlternatives = 1;
+
+        // For iOS Safari, we need to request permission first
+        if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(() => {
+                    console.log('Microphone permission granted');
+                })
+                .catch((error) => {
+                    console.error('Microphone permission denied:', error);
+                    this.handleError({ error: 'not-allowed' });
+                });
+        }
 
         // Event handlers
         this.recognition.onstart = this.handleStart.bind(this);
@@ -248,10 +261,7 @@ class SpeechRecognitionHandler {
         this.recognition.onspeechend = () => {
             console.log('Speech ended');
             if (this.searchInput.value.trim()) {
-                // On mobile, start countdown immediately
-                if (this.isMobile) {
-                    this.stopListening();
-                }
+                this.stopListening();
                 this.startCountdown();
             }
         };
@@ -392,20 +402,22 @@ class SpeechRecognitionHandler {
         this.voiceButton.classList.remove('listening');
 
         let message = '';
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        
         switch (event.error) {
             case 'no-speech':
-                message = this.isMobile ? 
-                    'Nuk u dëgjua zëri. Shtypni dhe flisni.' : 
+                message = isIOS ? 
+                    'Nuk u dëgjua zëri. Shtypni butonin dhe flisni pas tingullit.' : 
                     'Nuk u dëgjua asnjë zë. Ju lutem flisni më qartë dhe provoni përsëri.';
                 break;
             case 'audio-capture':
-                message = this.isMobile ?
-                    'Kontrolloni nëse mikrofoni është i aktivizuar në celularin tuaj.' :
+                message = isIOS ?
+                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.' :
                     'Nuk mund të aksesohet mikrofoni. Sigurohuni që keni një mikrofon të lidhur dhe funksional.';
                 break;
             case 'not-allowed':
-                message = this.isMobile ?
-                    'Ju lutem lejoni përdorimin e mikrofonit në celularin tuaj.' :
+                message = isIOS ?
+                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.' :
                     'Ju lutem jepni leje për përdorimin e mikrofonit në shfletuesin tuaj.';
                 break;
             case 'network':
@@ -418,10 +430,14 @@ class SpeechRecognitionHandler {
                 message = 'Gjuha shqipe nuk mbështetet në këtë shfletues. Provoni një shfletues tjetër ose përdorni tastierën.';
                 break;
             case 'service-not-allowed':
-                message = 'Shërbimi i njohjes së zërit nuk është i disponueshëm. Provoni përsëri më vonë.';
+                message = isIOS ?
+                    'Ju lutem aktivizoni njohjen e zërit në Settings > Safari > Microphone.' :
+                    'Shërbimi i njohjes së zërit nuk është i disponueshëm. Provoni përsëri më vonë.';
                 break;
             case 'start-error':
-                message = 'Pati një problem në nisjen e njohjes së zërit. Rifreskoni faqen dhe provoni përsëri.';
+                message = isIOS ?
+                    'Pati një problem. Ju lutem mbyllni dhe rihapni Safari-n, pastaj provoni përsëri.' :
+                    'Pati një problem në nisjen e njohjes së zërit. Rifreskoni faqen dhe provoni përsëri.';
                 break;
             case 'no-match':
                 message = 'Nuk arritëm të kuptojmë çfarë thatë. Ju lutem flisni më qartë dhe më ngadalë.';
