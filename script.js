@@ -208,4 +208,56 @@ function handleSearch(event) {
         // Remove focus from input to hide mobile keyboard
         searchInput.blur();
     }
+}
+
+// Voice Recognition Setup
+let recognition;
+let isListening = false;
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'sq-AL'; // Set language to Albanian
+
+    recognition.onstart = function() {
+        isListening = true;
+        voiceButton.classList.add('listening');
+    };
+
+    recognition.onend = function() {
+        isListening = false;
+        voiceButton.classList.remove('listening');
+    };
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        searchInput.value = transcript;
+        handleSearch(new Event('submit'));
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        isListening = false;
+        voiceButton.classList.remove('listening');
+    };
+}
+
+// Voice Button Event Handler
+const voiceButton = document.getElementById('voiceButton');
+const searchInput = document.getElementById('searchInput');
+
+if (voiceButton) {
+    voiceButton.addEventListener('click', () => {
+        if (!recognition) {
+            alert('Funksionaliteti i zërit nuk mbështetet në shfletuesin tuaj.');
+            return;
+        }
+
+        if (!isListening) {
+            recognition.start();
+        } else {
+            recognition.stop();
+        }
+    });
 } 
