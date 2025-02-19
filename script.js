@@ -220,33 +220,54 @@ class SpeechRecognitionHandler {
         this.searchTimeout = null;
         this.countdownInterval = null;
         this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        this.setupRecognition();
-        this.bindEvents();
+        this.setupRecognition().then(() => {
+            this.bindEvents();
+        }).catch(error => {
+            console.error('Failed to setup recognition:', error);
+            if (this.voiceButton) {
+                this.voiceButton.style.display = 'none';
+            }
+        });
     }
 
-    setupRecognition() {
+    async setupRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
             this.voiceButton.style.display = 'none';
             console.error('Shfletuesi juaj nuk mbështet njohjen e zërit.');
             return;
         }
 
-        // Try to use standard SpeechRecognition first, then fallback to webkit
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new SpeechRecognition();
-        
-        // Configure for Albanian with mobile-optimized settings
-        this.recognition.lang = 'sq-AL';
-        this.recognition.continuous = false;
-        this.recognition.interimResults = true;
-        this.recognition.maxAlternatives = 1;
+        try {
+            // Try to use standard SpeechRecognition first, then fallback to webkit
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            this.recognition = new SpeechRecognition();
+            
+            // Configure for Albanian with mobile-optimized settings
+            this.recognition.lang = 'sq-AL';
+            this.recognition.continuous = false;
+            this.recognition.interimResults = true;
+            this.recognition.maxAlternatives = 1;
 
-        // Event handlers
-        this.recognition.onstart = this.handleStart.bind(this);
-        this.recognition.onend = this.handleEnd.bind(this);
-        this.recognition.onresult = this.handleResult.bind(this);
-        this.recognition.onerror = this.handleError.bind(this);
-        this.recognition.onnomatch = this.handleNoMatch.bind(this);
+            // Event handlers
+            this.recognition.onstart = this.handleStart.bind(this);
+            this.recognition.onend = this.handleEnd.bind(this);
+            this.recognition.onresult = this.handleResult.bind(this);
+            this.recognition.onerror = this.handleError.bind(this);
+            this.recognition.onnomatch = this.handleNoMatch.bind(this);
+
+            // Pre-request permission for iOS
+            if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                try {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log('Initial microphone permission granted');
+                } catch (error) {
+                    console.log('Initial microphone permission pending');
+                }
+            }
+        } catch (error) {
+            console.error('Error setting up speech recognition:', error);
+            this.voiceButton.style.display = 'none';
+        }
     }
 
     bindEvents() {
@@ -307,21 +328,25 @@ class SpeechRecognitionHandler {
                 this.searchInput.blur();
             }
 
-            // For iOS Safari, request permission before starting
+            // For iOS Safari, ensure permission and initialize
             if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
                 try {
+                    // Request permission and keep stream active
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    // Keep the stream active
-                    window.streamReference = stream;
-                    console.log('Microphone permission granted');
+                    if (!window.streamReference) {
+                        window.streamReference = stream;
+                    }
                     
-                    // Small delay to ensure permission is properly processed
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    // Wait for permission to be fully processed
+                    await new Promise(resolve => setTimeout(resolve, 500));
                     
+                    // Start recognition
                     await this.recognition.start();
+                    this.isListening = true;
+                    this.voiceButton.classList.add('listening');
                     this.showFeedback('Duke dëgjuar... Shtypni për të ndaluar.');
                 } catch (error) {
-                    console.error('Microphone permission error:', error);
+                    console.error('iOS permission error:', error);
                     if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
                         this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
                     } else {
@@ -330,16 +355,21 @@ class SpeechRecognitionHandler {
                     return;
                 }
             } else {
+                // Non-iOS devices
                 await this.recognition.start();
+                this.isListening = true;
+                this.voiceButton.classList.add('listening');
                 this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
             }
         } catch (error) {
-            console.error('Error starting recognition:', error);
+            console.error('Start listening error:', error);
             if (error.name === 'NotAllowedError') {
                 this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
             } else {
                 this.handleError({ error: 'start-error' });
             }
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
         }
     }
 
@@ -369,11 +399,6 @@ class SpeechRecognitionHandler {
             this.searchInput.value = '';
             this.searchInput.blur();
         }
-
-        // Add visual feedback for iOS
-        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            this.showFeedback('Duke dëgjuar... Shtypni përsëri për të ndaluar.');
-        }
     }
 
     handleEnd() {
@@ -384,15 +409,6 @@ class SpeechRecognitionHandler {
         // Only show no speech message if no text was captured and no timeout is pending
         if (!this.searchInput.value && !this.searchTimeout) {
             this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
-        }
-        
-        // Don't auto-restart on iOS as it can cause issues
-        if (this.isMobile && this.isListening && !/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            try {
-                this.recognition.start();
-            } catch (error) {
-                console.error('Error restarting recognition:', error);
-            }
         }
     }
 
