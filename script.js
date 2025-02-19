@@ -192,4 +192,20 @@ document.addEventListener('click', (e) => {
     if (!chatbotWidget.contains(e.target)) {
         chatbotWidget.classList.remove('active');
     }
-}); 
+});
+
+// Search Functionality
+function handleSearch(event) {
+    event.preventDefault();
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim();
+    
+    if (searchTerm) {
+        // Here you can implement the search functionality
+        console.log('Searching for:', searchTerm);
+        // For now, just clear the input
+        searchInput.value = '';
+        // Remove focus from input to hide mobile keyboard
+        searchInput.blur();
+    }
+} 

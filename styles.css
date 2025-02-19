@@ -156,7 +156,7 @@ h1 {
     align-items: center;
 }
 
-input {
+.search-box input {
     flex: 1;
     background: transparent;
     border: none;
@@ -165,13 +165,14 @@ input {
     color: white;
     outline: none;
     min-width: 0;
+    width: 100%;
 }
 
-input::placeholder {
+.search-box input::placeholder {
     color: rgba(255, 255, 255, 0.6);
 }
 
-button {
+.search-button {
     background: linear-gradient(45deg, #2196f3, #00bcd4);
     border: none;
     border-radius: 50%;
@@ -186,11 +187,11 @@ button {
     padding: 0;
 }
 
-button:hover {
+.search-button:hover {
     transform: scale(1.05);
 }
 
-button svg {
+.search-button svg {
     color: white;
 }
 
@@ -296,18 +297,18 @@ button svg {
         gap: 8px;
     }
 
-    input {
+    .search-box input {
         font-size: 1rem;
         padding: 10px 16px;
     }
 
-    button {
+    .search-button {
         width: 42px;
         height: 42px;
         min-width: 42px;
     }
     
-    button svg {
+    .search-button svg {
         width: 20px;
         height: 20px;
     }
@@ -338,28 +339,25 @@ button svg {
     }
 
     .search-box {
-        padding: 4px;
-        gap: 4px;
+        padding: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
     }
 
-    input {
-        font-size: 0.9rem;
-        padding: 8px 12px;
+    .search-box input {
+        font-size: 0.95rem;
+        padding: 12px 20px;
+        border-radius: 25px;
+        text-align: left;
     }
 
-    button {
-        width: 36px;
-        height: 36px;
-        min-width: 36px;
+    .search-button {
+        display: none;
     }
     
-    button svg {
-        width: 16px;
-        height: 16px;
-    }
-    
-    input::placeholder {
-        font-size: 0.9rem;
+    /* Style for when input is focused */
+    .search-box input:focus {
+        background: rgba(255, 255, 255, 0.15);
     }
 
     .floating-text {
