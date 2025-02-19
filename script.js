@@ -236,21 +236,9 @@ class SpeechRecognitionHandler {
         
         // Configure for Albanian with mobile-optimized settings
         this.recognition.lang = 'sq-AL';
-        this.recognition.continuous = false; // Set to false for better iOS compatibility
+        this.recognition.continuous = false;
         this.recognition.interimResults = true;
         this.recognition.maxAlternatives = 1;
-
-        // For iOS Safari, we need to request permission first
-        if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(() => {
-                    console.log('Microphone permission granted');
-                })
-                .catch((error) => {
-                    console.error('Microphone permission denied:', error);
-                    this.handleError({ error: 'not-allowed' });
-                });
-        }
 
         // Event handlers
         this.recognition.onstart = this.handleStart.bind(this);
@@ -316,13 +304,25 @@ class SpeechRecognitionHandler {
         }
     }
 
-    startListening() {
+    async startListening() {
         try {
             this.clearTimers();
             
             // Hide keyboard on mobile
             if (this.isMobile) {
                 this.searchInput.blur();
+            }
+
+            // For iOS Safari, request permission only when starting
+            if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                try {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log('Microphone permission granted');
+                } catch (error) {
+                    console.error('Microphone permission denied:', error);
+                    this.handleError({ error: 'not-allowed' });
+                    return;
+                }
             }
             
             this.recognition.start();
@@ -352,11 +352,17 @@ class SpeechRecognitionHandler {
     handleStart() {
         this.isListening = true;
         this.voiceButton.classList.add('listening');
-        this.searchInput.placeholder = this.isMobile ? 'Duke dëgjuar...' : 'Ju lutem flisni...';
+        this.searchInput.placeholder = 'Duke dëgjuar...';
         
-        // Prevent keyboard from showing on mobile
+        // Clear any existing text when starting new recognition
         if (this.isMobile) {
+            this.searchInput.value = '';
             this.searchInput.blur();
+        }
+
+        // Add visual feedback for iOS
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+            this.showFeedback('Duke dëgjuar... Shtypni përsëri për të ndaluar.');
         }
     }
 
@@ -365,13 +371,13 @@ class SpeechRecognitionHandler {
         this.voiceButton.classList.remove('listening');
         this.searchInput.placeholder = 'Search anything...';
         
-        // If no result was received and no timeout is pending
+        // Only show no speech message if no text was captured and no timeout is pending
         if (!this.searchInput.value && !this.searchTimeout) {
             this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
         }
         
-        // Restart recognition on mobile if still listening
-        if (this.isMobile && this.isListening) {
+        // Don't auto-restart on iOS as it can cause issues
+        if (this.isMobile && this.isListening && !/iPhone|iPad|iPod/.test(navigator.userAgent)) {
             try {
                 this.recognition.start();
             } catch (error) {
@@ -393,8 +399,17 @@ class SpeechRecognitionHandler {
             }
         });
 
-        // Update the search input with all transcribed text
-        this.searchInput.value = finalTranscript || interimTranscript;
+        // Update the search input with transcribed text
+        const transcribedText = finalTranscript || interimTranscript;
+        if (transcribedText) {
+            this.searchInput.value = transcribedText;
+            
+            // On iOS, we need to manually trigger the end if we have a final result
+            if (finalTranscript && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                this.stopListening();
+                this.startCountdown();
+            }
+        }
     }
 
     handleError(event) {
