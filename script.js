@@ -232,7 +232,8 @@ class SpeechRecognitionHandler {
         }
 
         // Try to use standard SpeechRecognition first, then fallback to webkit
-        this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
         
         // Configure for Albanian with mobile-optimized settings
         this.recognition.lang = 'sq-AL';
@@ -246,13 +247,6 @@ class SpeechRecognitionHandler {
         this.recognition.onresult = this.handleResult.bind(this);
         this.recognition.onerror = this.handleError.bind(this);
         this.recognition.onnomatch = this.handleNoMatch.bind(this);
-        this.recognition.onspeechend = () => {
-            console.log('Speech ended');
-            if (this.searchInput.value.trim()) {
-                this.stopListening();
-                this.startCountdown();
-            }
-        };
     }
 
     bindEvents() {
@@ -313,23 +307,39 @@ class SpeechRecognitionHandler {
                 this.searchInput.blur();
             }
 
-            // For iOS Safari, request permission only when starting
+            // For iOS Safari, request permission before starting
             if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
                 try {
-                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    // Keep the stream active
+                    window.streamReference = stream;
                     console.log('Microphone permission granted');
+                    
+                    // Small delay to ensure permission is properly processed
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                    await this.recognition.start();
+                    this.showFeedback('Duke dëgjuar... Shtypni për të ndaluar.');
                 } catch (error) {
-                    console.error('Microphone permission denied:', error);
-                    this.handleError({ error: 'not-allowed' });
+                    console.error('Microphone permission error:', error);
+                    if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+                        this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
+                    } else {
+                        this.handleError({ error: 'not-allowed' });
+                    }
                     return;
                 }
+            } else {
+                await this.recognition.start();
+                this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
             }
-            
-            this.recognition.start();
-            this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
         } catch (error) {
             console.error('Error starting recognition:', error);
-            this.handleError({ error: 'start-error' });
+            if (error.name === 'NotAllowedError') {
+                this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
+            } else {
+                this.handleError({ error: 'start-error' });
+            }
         }
     }
 
@@ -415,6 +425,7 @@ class SpeechRecognitionHandler {
     handleError(event) {
         this.isListening = false;
         this.voiceButton.classList.remove('listening');
+        console.error('Speech recognition error:', event.error);
 
         let message = '';
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -426,14 +437,8 @@ class SpeechRecognitionHandler {
                     'Nuk u dëgjua asnjë zë. Ju lutem flisni më qartë dhe provoni përsëri.';
                 break;
             case 'audio-capture':
-                message = isIOS ?
-                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.' :
-                    'Nuk mund të aksesohet mikrofoni. Sigurohuni që keni një mikrofon të lidhur dhe funksional.';
-                break;
             case 'not-allowed':
-                message = isIOS ?
-                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.' :
-                    'Ju lutem jepni leje për përdorimin e mikrofonit në shfletuesin tuaj.';
+                message = 'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.';
                 break;
             case 'network':
                 message = 'Problem me lidhjen në internet. Kontrolloni lidhjen tuaj dhe provoni përsëri.';
@@ -451,18 +456,16 @@ class SpeechRecognitionHandler {
                 break;
             case 'start-error':
                 message = isIOS ?
-                    'Pati një problem. Ju lutem mbyllni dhe rihapni Safari-n, pastaj provoni përsëri.' :
+                    'Ju lutem mbyllni dhe rihapni Safari-n, pastaj provoni përsëri.' :
                     'Pati një problem në nisjen e njohjes së zërit. Rifreskoni faqen dhe provoni përsëri.';
                 break;
-            case 'no-match':
-                message = 'Nuk arritëm të kuptojmë çfarë thatë. Ju lutem flisni më qartë dhe më ngadalë.';
-                break;
             default:
-                message = 'Ndodhi një gabim i papritur. Ju lutem provoni përsëri ose përdorni tastierën.';
+                message = isIOS ?
+                    'Ju lutem kontrolloni lejet e mikrofonit në Settings > Safari > Microphone.' :
+                    'Ndodhi një gabim i papritur. Ju lutem provoni përsëri.';
         }
         
         this.showFeedback(message);
-        console.error('Speech recognition error:', event.error);
     }
 
     handleNoMatch() {

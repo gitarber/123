@@ -955,7 +955,7 @@ h1 {
     min-width: 46px;
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(33, 150, 243, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -966,7 +966,7 @@ h1 {
     transition: all 0.3s ease;
     padding: 0;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .voice-indicator {
@@ -983,13 +983,14 @@ h1 {
     width: 24px;
     height: 24px;
     color: #fff;
-    opacity: 0.8;
+    opacity: 1;
     transition: all 0.3s ease;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+    display: block !important;
 }
 
 .voice-button:hover {
@@ -1097,25 +1098,23 @@ h1 {
         height: 38px;
         min-width: 38px;
         margin-right: 8px;
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(33, 150, 243, 0.2);
         -webkit-tap-highlight-color: transparent;
+        display: flex !important;
     }
     
     .voice-indicator {
         width: 20px;
         height: 20px;
+        opacity: 1;
+        display: flex !important;
     }
 
     .voice-indicator svg {
         width: 20px;
         height: 20px;
         opacity: 1;
-    }
-    
-    /* Ensure the icon is visible on iOS */
-    .voice-button:not(.listening) .voice-indicator svg {
-        opacity: 1;
-        transform: none;
+        display: block !important;
     }
 
     .wave-bars {
