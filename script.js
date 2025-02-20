@@ -364,7 +364,7 @@ class SpeechRecognitionHandler {
                 this.searchInput.blur();
             }
 
-            // For iOS Safari, ensure permission and initialize
+            // Request permission and initialize recognition only when starting to listen
             if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
                 try {
                     // Request permission and keep stream active
@@ -375,12 +375,6 @@ class SpeechRecognitionHandler {
                     
                     // Wait for permission to be fully processed
                     await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    // Start recognition
-                    await this.recognition.start();
-                    this.isListening = true;
-                    this.voiceButton.classList.add('listening');
-                    this.showFeedback('Duke dëgjuar... Shtypni për të ndaluar.');
                 } catch (error) {
                     console.error('iOS permission error:', error);
                     if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
@@ -390,13 +384,13 @@ class SpeechRecognitionHandler {
                     }
                     return;
                 }
-            } else {
-                // Non-iOS devices
-                await this.recognition.start();
-                this.isListening = true;
-                this.voiceButton.classList.add('listening');
-                this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
             }
+
+            // Start recognition
+            await this.recognition.start();
+            this.isListening = true;
+            this.voiceButton.classList.add('listening');
+            this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
         } catch (error) {
             console.error('Start listening error:', error);
             if (error.name === 'NotAllowedError') {
