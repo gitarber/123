@@ -1,22 +1,27 @@
 .tutorials-content {
     position: relative;
     z-index: 1;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100vw; /* Full viewport width */
+    max-width: 100%; /* Remove max-width constraint */
+    margin: 0;
     padding: 2rem;
-    min-height: 100vh;
+    height: calc(100vh - 4rem); /* Fixed height to enable scrolling */
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto;
+    overflow-y: auto; /* Enable vertical scrolling */
     padding-top: 2rem;
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(27, 179, 129, 0.3) transparent;
 }
 
 .page-title {
+    width: 100%;
+    max-width: 1200px; /* Match grid max-width */
+    margin: 0 auto 3rem auto;
+    text-align: center;
     font-size: 3rem;
-    margin-bottom: 3rem;
     background: linear-gradient(45deg, #ffffff, #00fdb1, #00d999);
     -webkit-background-clip: text;
     background-clip: text;
@@ -28,10 +33,12 @@
 }
 
 .tutorials-grid {
+    width: 100%;
+    max-width: 1200px; /* Maximum content width */
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    width: 100%;
     padding-bottom: 2rem;
 }
 
@@ -169,8 +176,11 @@ body {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .tutorials-content {
-        padding: 1.5rem;
-        padding-top: 5rem;
+        padding: 5rem 0 1.5rem 1.5rem;
+    }
+    
+    .tutorials-grid {
+        padding-right: 1.5rem;
     }
 
     .page-title {
@@ -186,8 +196,11 @@ body {
 
 @media (max-width: 480px) {
     .tutorials-content {
-        padding: 1rem;
-        padding-top: 4rem;
+        padding: 4rem 0 1rem 1rem;
+    }
+    
+    .tutorials-grid {
+        padding-right: 1rem;
     }
 
     .page-title {
@@ -211,13 +224,13 @@ body {
 
 /* Custom Scrollbar Styling */
 .tutorials-content::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
     background-color: transparent;
 }
 
 .tutorials-content::-webkit-scrollbar-thumb {
     background: rgba(27, 179, 129, 0.3);
-    border-radius: 4px;
+    border-radius: 3px;
     transition: all 0.3s ease;
 }
 
@@ -227,12 +240,6 @@ body {
 
 .tutorials-content::-webkit-scrollbar-track {
     background: transparent;
-}
-
-/* Firefox scrollbar styling */
-.tutorials-content {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(27, 179, 129, 0.3) transparent;
 }
 
 /* Ensure smooth scrolling */

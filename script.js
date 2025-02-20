@@ -95,49 +95,8 @@ const videoData = [
         description: 'Si të gjeneroni vërtetime për biznesin tuaj në e-Albania',
         thumbnail: 'thumbnails/e-albania/4.png',
         category: 'e-albania'
-    },
-    {
-        id: 'ybt_J0JZEvg',
-        title: 'Si të ndryshojmë veprimtarinë e biznesit nga e albania ?',
-        description: 'Udhëzues për ndryshimin e veprimtarisë së biznesit në e-Albania',
-        thumbnail: 'thumbnails/e-albania/15.png',
-        category: 'e-albania'
-    },
-    {
-        id: 'VIDEO_ID_16',
-        title: 'Deklarimi i punonjësve me kohë të pjesshme',
-        description: 'Si të deklaroni punonjësit part-time në sistemin e-Albania dhe procedurat e duhura për sigurimet shoqërore',
-        thumbnail: 'thumbnails/e-albania/16.png',
-        category: 'punonjës,sigurime'
-    },
-    {
-        id: 'VIDEO_ID_17',
-        title: 'Aplikimi për leje ndërtimi për biznesin',
-        description: 'Procedura e aplikimit për leje ndërtimi për ambiente biznesi përmes platformës e-Albania',
-        thumbnail: 'thumbnails/e-albania/17.png',
-        category: 'leje,ndërtim'
-    },
-    {
-        id: 'VIDEO_ID_18',
-        title: 'Gjenerimi i vërtetimit të xhiros vjetore',
-        description: 'Si të gjeneroni vërtetimin e xhiros vjetore të biznesit tuaj nga e-Albania',
-        thumbnail: 'thumbnails/e-albania/18.png',
-        category: 'vërtetime,financë'
-    },
-    {
-        id: 'VIDEO_ID_19',
-        title: 'Deklarimi i ndryshimit të adresës së biznesit',
-        description: 'Hapat për të deklaruar ndryshimin e adresës së biznesit në platformën e-Albania',
-        thumbnail: 'thumbnails/e-albania/19.png',
-        category: 'ndryshime,adresë'
-    },
-    {
-        id: 'VIDEO_ID_20',
-        title: 'Aplikimi për hapje të degës së re të biznesit',
-        description: 'Udhëzues për hapjen e një dege të re të biznesit përmes platformës e-Albania',
-        thumbnail: 'thumbnails/e-albania/20.png',
-        category: 'degë,zgjerim'
     }
+    // Add other videos here...
 ];
 
 // Search functionality
