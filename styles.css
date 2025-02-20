@@ -99,8 +99,8 @@ body {
     width: 100%;
     height: 100%;
     background-image: 
-        radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        radial-gradient(circle, rgba(27, 179, 129, 0.3) 2px, transparent 2px),
+        radial-gradient(circle, rgba(27, 179, 129, 0.3) 2px, transparent 2px);
     background-size: 50px 50px;
     background-position: 0 0, 25px 25px;
     animation: particleAnimation 20s linear infinite;
@@ -121,15 +121,68 @@ body {
 
 .search-container {
     backdrop-filter: blur(10px);
-    background: rgba(0, 253, 177, 0.1);
+    background: rgba(27, 179, 129, 0.1);
     border-radius: 20px;
     padding: 3rem;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(0, 253, 177, 0.2);
     max-width: 90%;
     margin: 0 auto;
     width: 100%;
     position: relative;
+    border: none;
+}
+
+.search-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, transparent, transparent);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.search-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        #1bb381 25%, 
+        #00fdb1 50%, 
+        #1bb381 75%, 
+        transparent 100%
+    );
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 300% 100%;
+    animation: moveGradient 12s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes moveGradient {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 h1 {
@@ -320,6 +373,14 @@ h1 {
         letter-spacing: 0.1em;
         -webkit-text-stroke: 1px rgba(255,255,255,0.15);
     }
+
+    .particles {
+        background-image: 
+            radial-gradient(circle, rgba(27, 179, 129, 0.25) 1.5px, transparent 1.5px),
+            radial-gradient(circle, rgba(27, 179, 129, 0.25) 1.5px, transparent 1.5px);
+        background-size: 40px 40px;
+        background-position: 0 0, 20px 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -328,8 +389,13 @@ h1 {
     }
 
     .search-container {
-        padding: 8px;
+        padding: 1.5rem;
         background: rgba(27, 179, 129, 0.1);
+        border-radius: 25px;
+    }
+
+    .search-container::before,
+    .search-container::after {
         border-radius: 25px;
     }
 
@@ -379,6 +445,14 @@ h1 {
         min-width: 46px;
         margin-right: 8px;
         margin-left: 4px;
+    }
+
+    .particles {
+        background-image: 
+            radial-gradient(circle, rgba(27, 179, 129, 0.2) 1.5px, transparent 1.5px),
+            radial-gradient(circle, rgba(27, 179, 129, 0.2) 1.5px, transparent 1.5px);
+        background-size: 30px 30px;
+        background-position: 0 0, 15px 15px;
     }
 }
 
