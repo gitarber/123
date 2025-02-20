@@ -256,6 +256,65 @@ document.addEventListener('DOMContentLoaded', () => {
             voiceButton.style.display = 'none';
         }
     }
+
+    // Login Modal Functionality
+    const loginModal = document.querySelector('.login-modal');
+    const loginButtons = document.querySelectorAll('.auth-btn.login'); // This will get both desktop and mobile buttons
+    const loginClose = document.querySelector('.login-close');
+    const loginForm = document.querySelector('.login-form');
+
+    // Open modal when clicking any login button
+    loginButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            loginModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            // Close the nav menu if it's open (mobile)
+            document.body.classList.remove('nav-active');
+        });
+    });
+
+    // Close modal when clicking close button
+    loginClose.addEventListener('click', () => {
+        loginModal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    });
+
+    // Close modal when clicking outside
+    loginModal.addEventListener('click', (e) => {
+        if (e.target === loginModal) {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Close modal with escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && loginModal.classList.contains('active')) {
+            loginModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Handle login form submission
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = loginForm.querySelector('input[type="email"]').value;
+        const password = loginForm.querySelector('input[type="password"]').value;
+
+        try {
+            // Here you would typically make an API call to your backend
+            console.log('Login attempt:', { email, password });
+            
+            // For now, just show a success message and close the modal
+            alert('Login successful!');
+            loginModal.classList.remove('active');
+            document.body.style.overflow = '';
+            loginForm.reset();
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed. Please try again.');
+        }
+    });
 });
 
 // Chatbot Widget Functionality
