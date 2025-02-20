@@ -245,66 +245,77 @@ class SpeechRecognitionHandler {
         this.searchTimeout = null;
         this.countdownInterval = null;
         this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        this.setupRecognition().then(() => {
+        this.isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        
+        // Only initialize the recognition object, don't request permissions yet
+        this.initRecognition().then(() => {
             this.bindEvents();
         }).catch(error => {
-            console.error('Failed to setup recognition:', error);
+            console.error('Failed to initialize recognition:', error);
             if (this.voiceButton) {
                 this.voiceButton.style.display = 'none';
             }
         });
     }
 
-    async setupRecognition() {
+    async initRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            this.voiceButton.style.display = 'none';
-            console.error('Shfletuesi juaj nuk mbështet njohjen e zërit.');
-            return;
+            throw new Error('Speech recognition not supported');
         }
 
+        // Initialize recognition object without starting it
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+        
+        // Configure recognition settings
+        this.recognition.lang = 'sq-AL';
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.maxAlternatives = 1;
+
+        // Set up event handlers
+        this.recognition.onstart = this.handleStart.bind(this);
+        this.recognition.onend = this.handleEnd.bind(this);
+        this.recognition.onresult = this.handleResult.bind(this);
+        this.recognition.onerror = this.handleError.bind(this);
+        this.recognition.onnomatch = this.handleNoMatch.bind(this);
+    }
+
+    async requestMicrophonePermission() {
         try {
-            // Try to use standard SpeechRecognition first, then fallback to webkit
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            this.recognition = new SpeechRecognition();
-            
-            // Configure for Albanian with mobile-optimized settings
-            this.recognition.lang = 'sq-AL';
-            this.recognition.continuous = false;
-            this.recognition.interimResults = true;
-            this.recognition.maxAlternatives = 1;
-
-            // Event handlers
-            this.recognition.onstart = this.handleStart.bind(this);
-            this.recognition.onend = this.handleEnd.bind(this);
-            this.recognition.onresult = this.handleResult.bind(this);
-            this.recognition.onerror = this.handleError.bind(this);
-            this.recognition.onnomatch = this.handleNoMatch.bind(this);
-
-            // Pre-request permission for iOS
-            if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                try {
-                    await navigator.mediaDevices.getUserMedia({ audio: true });
-                    console.log('Initial microphone permission granted');
-                } catch (error) {
-                    console.log('Initial microphone permission pending');
-                }
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Store the stream reference to keep the permission active
+            if (!window.streamReference) {
+                window.streamReference = stream;
             }
+            return true;
         } catch (error) {
-            console.error('Error setting up speech recognition:', error);
-            this.voiceButton.style.display = 'none';
+            console.error('Microphone permission error:', error);
+            if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+                this.showFeedback('Please allow microphone access to use voice commands');
+            }
+            return false;
         }
     }
 
     bindEvents() {
         if (this.voiceButton) {
-            this.voiceButton.addEventListener('click', () => {
+            this.voiceButton.addEventListener('click', async () => {
                 if (!this.recognition) {
-                    alert('Shfletuesi juaj nuk mbështet njohjen e zërit.');
+                    this.showFeedback('Speech recognition not supported in your browser');
                     return;
                 }
+
                 if (this.isListening) {
                     this.stopListening();
                 } else {
+                    // Only request permission when the user clicks the button
+                    if (this.isIOS) {
+                        const permissionGranted = await this.requestMicrophonePermission();
+                        if (!permissionGranted) {
+                            return;
+                        }
+                    }
                     this.startListening();
                 }
             });
@@ -364,40 +375,14 @@ class SpeechRecognitionHandler {
                 this.searchInput.blur();
             }
 
-            // Request permission and initialize recognition only when starting to listen
-            if (this.isMobile && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                try {
-                    // Request permission and keep stream active
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    if (!window.streamReference) {
-                        window.streamReference = stream;
-                    }
-                    
-                    // Wait for permission to be fully processed
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                } catch (error) {
-                    console.error('iOS permission error:', error);
-                    if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
-                        this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
-                    } else {
-                        this.handleError({ error: 'not-allowed' });
-                    }
-                    return;
-                }
-            }
-
             // Start recognition
             await this.recognition.start();
             this.isListening = true;
             this.voiceButton.classList.add('listening');
-            this.showFeedback(this.isMobile ? 'Shtypni për të ndaluar...' : 'Ju lutem flisni...');
+            this.showFeedback(this.isMobile ? 'Tap to stop...' : 'Listening...');
         } catch (error) {
             console.error('Start listening error:', error);
-            if (error.name === 'NotAllowedError') {
-                this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.');
-            } else {
-                this.handleError({ error: 'start-error' });
-            }
+            this.handleError({ error: 'start-error' });
             this.isListening = false;
             this.voiceButton.classList.remove('listening');
         }
@@ -486,48 +471,47 @@ class SpeechRecognitionHandler {
         console.error('Speech recognition error:', event.error);
 
         let message = '';
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         
         switch (event.error) {
             case 'no-speech':
-                message = isIOS ? 
-                    'Nuk u dëgjua zëri. Shtypni butonin dhe flisni pas tingullit.' : 
-                    'Nuk u dëgjua asnjë zë. Ju lutem flisni më qartë dhe provoni përsëri.';
+                message = 'No speech detected. Please try speaking again.';
                 break;
             case 'audio-capture':
             case 'not-allowed':
-                message = 'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone.';
+                message = this.isIOS ? 
+                    'Please allow microphone access in Settings > Safari > Microphone' :
+                    'Please allow microphone access to use voice commands';
                 break;
             case 'network':
-                message = 'Problem me lidhjen në internet. Kontrolloni lidhjen tuaj dhe provoni përsëri.';
+                message = 'Network error. Please check your connection and try again.';
                 break;
             case 'aborted':
-                message = 'Njohja e zërit u ndërpre. Shtypni butonin përsëri për të rifilluar.';
+                message = 'Voice recognition was stopped. Tap the mic to try again.';
                 break;
             case 'language-not-supported':
-                message = 'Gjuha shqipe nuk mbështetet në këtë shfletues. Provoni një shfletues tjetër ose përdorni tastierën.';
+                message = 'This language is not supported. Please try another browser.';
                 break;
             case 'service-not-allowed':
-                message = isIOS ?
-                    'Ju lutem aktivizoni njohjen e zërit në Settings > Safari > Microphone.' :
-                    'Shërbimi i njohjes së zërit nuk është i disponueshëm. Provoni përsëri më vonë.';
+                message = this.isIOS ?
+                    'Please enable voice recognition in Settings > Safari > Microphone' :
+                    'Voice recognition service is not available. Please try again later.';
                 break;
             case 'start-error':
-                message = isIOS ?
-                    'Ju lutem mbyllni dhe rihapni Safari-n, pastaj provoni përsëri.' :
-                    'Pati një problem në nisjen e njohjes së zërit. Rifreskoni faqen dhe provoni përsëri.';
+                message = this.isIOS ?
+                    'Please close and reopen Safari, then try again' :
+                    'Error starting voice recognition. Please refresh and try again.';
                 break;
             default:
-                message = isIOS ?
-                    'Ju lutem kontrolloni lejet e mikrofonit në Settings > Safari > Microphone.' :
-                    'Ndodhi një gabim i papritur. Ju lutem provoni përsëri.';
+                message = this.isIOS ?
+                    'Please check microphone permissions in Settings > Safari > Microphone' :
+                    'An unexpected error occurred. Please try again.';
         }
         
         this.showFeedback(message);
     }
 
     handleNoMatch() {
-        this.showFeedback('Nuk mund të njihej zëri. Ju lutem provoni përsëri.');
+        this.showFeedback('Could not recognize speech. Please try again.');
     }
 
     showFeedback(message) {
