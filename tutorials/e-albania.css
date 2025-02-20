@@ -1,15 +1,16 @@
 .videos-content {
     position: relative;
     z-index: 1;
-    width: 100vw; /* Full viewport width */
-    max-width: 100%; /* Remove max-width constraint */
+    width: 100%;
+    max-width: 100%;
     margin: 0;
-    padding: 2rem;
+    padding: 2rem 5rem 2rem 2rem;
     height: calc(100vh - 4rem);
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-y: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
     scrollbar-width: thin;
     scrollbar-color: rgba(27, 179, 129, 0.3) transparent;
@@ -18,10 +19,10 @@
 /* Add inner container for content width control */
 .videos-grid {
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     padding: 1.5rem;
 }
@@ -190,14 +191,27 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .videos-content {
-        padding: 4rem 1rem 1rem 1rem;
-    }
-
+@media (max-width: 1200px) {
     .videos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .videos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .videos-grid {
+        grid-template-columns: 1fr;
         padding: 1rem;
         gap: 1rem;
+    }
+
+    .videos-content {
+        padding: 4rem 1rem 1rem 1rem;
     }
 
     .video-card h3 {
