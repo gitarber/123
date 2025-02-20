@@ -5,6 +5,7 @@ class MenuHandler {
         this.navOverlay = document.querySelector('.nav-overlay');
         this.body = document.body;
         this.mainNav = document.querySelector('.main-nav');
+        this.lastScrollTop = 0;
         this.bindEvents();
     }
 
@@ -36,6 +37,31 @@ class MenuHandler {
             if (e.key === 'Escape') {
                 this.body.classList.remove('nav-active');
             }
+        });
+
+        // Handle scroll
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Show menu button when at top
+            if (scrollTop <= 0) {
+                this.menuButton.style.opacity = '1';
+                this.menuButton.style.transform = 'translateY(0)';
+                return;
+            }
+
+            // Hide menu button when scrolling down, show when scrolling up
+            if (scrollTop > this.lastScrollTop) {
+                // Scrolling down
+                this.menuButton.style.opacity = '0';
+                this.menuButton.style.transform = 'translateY(-20px)';
+            } else {
+                // Scrolling up
+                this.menuButton.style.opacity = '1';
+                this.menuButton.style.transform = 'translateY(0)';
+            }
+            
+            this.lastScrollTop = scrollTop;
         });
     }
 }

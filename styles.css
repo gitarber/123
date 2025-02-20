@@ -510,6 +510,8 @@ h1 {
     right: 2rem;
     z-index: 1000;
     cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
 }
 
 .menu-icon {
