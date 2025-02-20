@@ -1,30 +1,66 @@
 // Menu Functionality
+class MenuHandler {
+    constructor() {
+        this.menuButton = document.querySelector('.menu-button');
+        this.navOverlay = document.querySelector('.nav-overlay');
+        this.body = document.body;
+        this.mainNav = document.querySelector('.main-nav');
+        this.bindEvents();
+    }
+
+    bindEvents() {
+        if (!this.menuButton || !this.navOverlay) return;
+
+        // Toggle menu
+        this.menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.body.classList.toggle('nav-active');
+        });
+
+        // Close menu when clicking overlay
+        this.navOverlay.addEventListener('click', () => {
+            this.body.classList.remove('nav-active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.body.classList.contains('nav-active') && 
+                !this.mainNav.contains(e.target) && 
+                !this.menuButton.contains(e.target)) {
+                this.body.classList.remove('nav-active');
+            }
+        });
+
+        // Close menu when pressing escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.body.classList.remove('nav-active');
+            }
+        });
+    }
+}
+
+// Initialize all functionality when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    const menuButton = document.querySelector('.menu-button');
-    const navOverlay = document.querySelector('.nav-overlay');
-    const body = document.body;
-
-    // Toggle menu
-    menuButton.addEventListener('click', () => {
-        body.classList.toggle('nav-active');
-    });
-
-    // Close menu when clicking overlay
-    navOverlay.addEventListener('click', () => {
-        body.classList.remove('nav-active');
-    });
-
-    // Close menu when pressing escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            body.classList.remove('nav-active');
-        }
-    });
-
-    // Update initial bot message
+    // Initialize menu
+    window.menuHandler = new MenuHandler();
+    
+    // Initialize chatbot
     const initialMessage = document.querySelector('.message.bot .message-content');
-    if (initialMessage) {
+    if (initialMessage && window.AI_CONTEXT) {
         initialMessage.textContent = AI_CONTEXT.commonPhrases.greeting;
+    }
+    
+    // Initialize speech recognition
+    try {
+        window.speechHandler = new SpeechRecognitionHandler();
+        console.log('Speech recognition initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize speech recognition:', error);
+        const voiceButton = document.getElementById('voiceButton');
+        if (voiceButton) {
+            voiceButton.style.display = 'none';
+        }
     }
 });
 
@@ -540,47 +576,4 @@ class SpeechRecognitionHandler {
             }, this.isMobile ? 2000 : 3000);
         }
     }
-}
-
-// Initialize speech recognition when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize menu functionality
-    const menuButton = document.querySelector('.menu-button');
-    const navOverlay = document.querySelector('.nav-overlay');
-    const body = document.body;
-
-    if (menuButton && navOverlay) {
-        menuButton.addEventListener('click', () => {
-            body.classList.toggle('nav-active');
-        });
-
-        navOverlay.addEventListener('click', () => {
-            body.classList.remove('nav-active');
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                body.classList.remove('nav-active');
-            }
-        });
-    }
-
-    // Initialize chatbot
-    const initialMessage = document.querySelector('.message.bot .message-content');
-    if (initialMessage && window.AI_CONTEXT) {
-        initialMessage.textContent = AI_CONTEXT.commonPhrases.greeting;
-    }
-    
-    // Initialize speech recognition
-    try {
-        window.speechHandler = new SpeechRecognitionHandler();
-        console.log('Speech recognition initialized successfully');
-    } catch (error) {
-        console.error('Failed to initialize speech recognition:', error);
-        // Hide voice button if initialization fails
-        const voiceButton = document.getElementById('voiceButton');
-        if (voiceButton) {
-            voiceButton.style.display = 'none';
-        }
-    }
-}); 
+} 
