@@ -196,17 +196,42 @@ document.addEventListener('click', (e) => {
 
 // Search Functionality
 function handleSearch(event) {
-    event.preventDefault();
+    if (event) {
+        event.preventDefault();
+    }
     const searchInput = document.getElementById('searchInput');
     const searchTerm = searchInput.value.trim();
     
     if (searchTerm) {
         // Here you can implement the search functionality
-        console.log('Searching for:', searchTerm);
-        // For now, just clear the input
+        console.log('Performing search for:', searchTerm);
+        
+        // Example: You can redirect to a search results page
+        // window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        
+        // Store the search term before clearing input
+        const searchedTerm = searchTerm;
+        
+        // Clear the input and remove focus
         searchInput.value = '';
-        // Remove focus from input to hide mobile keyboard
         searchInput.blur();
+        
+        // Show feedback that search was performed
+        const speechHandler = window.speechHandler;
+        if (speechHandler) {
+            speechHandler.showFeedback(`Duke kërkuar: "${searchedTerm}"`);
+            
+            // Optional: Show a "no results" message after a delay
+            setTimeout(() => {
+                speechHandler.showFeedback('Nuk u gjetën rezultate për këtë kërkim.');
+            }, 2000);
+        }
+    } else {
+        // Show feedback for empty search
+        const speechHandler = window.speechHandler;
+        if (speechHandler) {
+            speechHandler.showFeedback('Ju lutem shkruani diçka për të kërkuar.');
+        }
     }
 }
 
@@ -293,16 +318,27 @@ class SpeechRecognitionHandler {
         let countdown = 3;
         this.showFeedback(`Kërkimi fillon për... ${countdown}`);
 
+        // Store the search term at the start of countdown
+        const searchTerm = this.searchInput.value.trim();
+        if (!searchTerm) {
+            return; // Don't start countdown if there's no text
+        }
+
         this.countdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
                 this.showFeedback(`Kërkimi fillon për... ${countdown}`);
+            } else {
+                // Clear the interval when countdown reaches 0
+                clearInterval(this.countdownInterval);
+                this.countdownInterval = null;
             }
         }, 1000);
 
         this.searchTimeout = setTimeout(() => {
             this.clearTimers();
-            if (!this.isListening) {
+            // Only perform search if the text hasn't changed
+            if (this.searchInput.value.trim() === searchTerm) {
                 handleSearch(new Event('submit'));
             }
         }, 3000);
@@ -384,8 +420,17 @@ class SpeechRecognitionHandler {
             if (this.isMobile) {
                 this.searchInput.blur();
             }
+
+            // Ensure we start the countdown if we have text when manually stopping
+            if (this.searchInput.value.trim()) {
+                this.startCountdown();
+            }
         } catch (error) {
             console.error('Error stopping recognition:', error);
+            // Reset state even if there's an error
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
+            this.clearTimers();
         }
     }
 
@@ -406,8 +451,11 @@ class SpeechRecognitionHandler {
         this.voiceButton.classList.remove('listening');
         this.searchInput.placeholder = 'Search anything...';
         
-        // Only show no speech message if no text was captured and no timeout is pending
-        if (!this.searchInput.value && !this.searchTimeout) {
+        // If we have text in the input, start the countdown for search
+        if (this.searchInput.value.trim()) {
+            this.startCountdown();
+        } else if (!this.searchTimeout) {
+            // Only show no speech message if no text was captured and no timeout is pending
             this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
         }
     }
@@ -518,8 +566,43 @@ class SpeechRecognitionHandler {
 
 // Initialize speech recognition when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // ... existing DOMContentLoaded code ...
+    // Initialize menu functionality
+    const menuButton = document.querySelector('.menu-button');
+    const navOverlay = document.querySelector('.nav-overlay');
+    const body = document.body;
+
+    if (menuButton && navOverlay) {
+        menuButton.addEventListener('click', () => {
+            body.classList.toggle('nav-active');
+        });
+
+        navOverlay.addEventListener('click', () => {
+            body.classList.remove('nav-active');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                body.classList.remove('nav-active');
+            }
+        });
+    }
+
+    // Initialize chatbot
+    const initialMessage = document.querySelector('.message.bot .message-content');
+    if (initialMessage && window.AI_CONTEXT) {
+        initialMessage.textContent = AI_CONTEXT.commonPhrases.greeting;
+    }
     
     // Initialize speech recognition
-    const speechHandler = new SpeechRecognitionHandler();
+    try {
+        window.speechHandler = new SpeechRecognitionHandler();
+        console.log('Speech recognition initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize speech recognition:', error);
+        // Hide voice button if initialization fails
+        const voiceButton = document.getElementById('voiceButton');
+        if (voiceButton) {
+            voiceButton.style.display = 'none';
+        }
+    }
 }); 
