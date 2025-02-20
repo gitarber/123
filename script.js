@@ -66,10 +66,219 @@ class MenuHandler {
     }
 }
 
-// Initialize all functionality when the page loads
+// Video Data
+const videoData = [
+    {
+        id: '60jZKH9q_RA',
+        title: 'Si të regjistroheni në e-Albania',
+        description: 'Udhëzues i plotë për regjistrimin në platformën e-Albania',
+        thumbnail: 'thumbnails/e-albania/1.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'rsROpcHbT_Y',
+        title: 'Aplikimi për NIPT',
+        description: 'Si të aplikoni për NIPT në platformën e-Albania',
+        thumbnail: 'thumbnails/e-albania/2.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'TnCy5Qze1pI',
+        title: 'Deklarimi i punonjësve të rinj',
+        description: 'Procedura e deklarimit të punonjësve të rinj në e-Albania',
+        thumbnail: 'thumbnails/e-albania/3.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'nHipbjjsGMM',
+        title: 'Gjenerimi i vërtetimeve për biznesin',
+        description: 'Si të gjeneroni vërtetime për biznesin tuaj në e-Albania',
+        thumbnail: 'thumbnails/e-albania/4.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'ybt_J0JZEvg',
+        title: 'Si të ndryshojmë veprimtarinë e biznesit nga e albania ?',
+        description: 'Udhëzues për ndryshimin e veprimtarisë së biznesit në e-Albania',
+        thumbnail: 'thumbnails/e-albania/15.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'VIDEO_ID_16',
+        title: 'Deklarimi i punonjësve me kohë të pjesshme',
+        description: 'Si të deklaroni punonjësit part-time në sistemin e-Albania dhe procedurat e duhura për sigurimet shoqërore',
+        thumbnail: 'thumbnails/e-albania/16.png',
+        category: 'punonjës,sigurime'
+    },
+    {
+        id: 'VIDEO_ID_17',
+        title: 'Aplikimi për leje ndërtimi për biznesin',
+        description: 'Procedura e aplikimit për leje ndërtimi për ambiente biznesi përmes platformës e-Albania',
+        thumbnail: 'thumbnails/e-albania/17.png',
+        category: 'leje,ndërtim'
+    },
+    {
+        id: 'VIDEO_ID_18',
+        title: 'Gjenerimi i vërtetimit të xhiros vjetore',
+        description: 'Si të gjeneroni vërtetimin e xhiros vjetore të biznesit tuaj nga e-Albania',
+        thumbnail: 'thumbnails/e-albania/18.png',
+        category: 'vërtetime,financë'
+    },
+    {
+        id: 'VIDEO_ID_19',
+        title: 'Deklarimi i ndryshimit të adresës së biznesit',
+        description: 'Hapat për të deklaruar ndryshimin e adresës së biznesit në platformën e-Albania',
+        thumbnail: 'thumbnails/e-albania/19.png',
+        category: 'ndryshime,adresë'
+    },
+    {
+        id: 'VIDEO_ID_20',
+        title: 'Aplikimi për hapje të degës së re të biznesit',
+        description: 'Udhëzues për hapjen e një dege të re të biznesit përmes platformës e-Albania',
+        thumbnail: 'thumbnails/e-albania/20.png',
+        category: 'degë,zgjerim'
+    }
+];
+
+// Search functionality
+function handleSearch(event) {
+    if (event) {
+        event.preventDefault();
+    }
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    
+    if (searchTerm) {
+        // Store the search term in sessionStorage
+        sessionStorage.setItem('lastSearch', searchTerm);
+        
+        // Redirect to search results page
+        window.location.href = `/search-results.html?q=${encodeURIComponent(searchTerm)}`;
+    }
+}
+
+// Function to display search results
+function displaySearchResults() {
+    const searchResults = document.getElementById('searchResults');
+    if (!searchResults) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get('q')?.toLowerCase() || sessionStorage.getItem('lastSearch');
+
+    if (!searchTerm) {
+        window.location.href = '/index.html';
+        return;
+    }
+
+    // Display search term
+    document.getElementById('searchQuery').textContent = searchTerm;
+
+    // Split search term into keywords
+    const keywords = searchTerm.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+    
+    // Score and rank results
+    const scoredResults = videoData.map(video => {
+        let score = 0;
+        const searchableText = `${video.title} ${video.description} ${video.category}`.toLowerCase();
+        
+        // Check for exact matches
+        if (searchableText.includes(searchTerm)) {
+            score += 10;
+        }
+
+        // Check for keyword matches
+        keywords.forEach(keyword => {
+            // Score based on keyword presence
+            if (video.title.toLowerCase().includes(keyword)) {
+                score += 5; // Higher score for title matches
+            }
+            if (video.description.toLowerCase().includes(keyword)) {
+                score += 3; // Medium score for description matches
+            }
+            if (video.category.toLowerCase().includes(keyword)) {
+                score += 2; // Lower score for category matches
+            }
+        });
+
+        // Add common search terms and their related topics
+        const relatedTerms = {
+            'si': ['how', 'tutorial', 'guide', 'udhëzues'],
+            'aplikim': ['application', 'apply', 'submit', 'register'],
+            'deklarim': ['declare', 'submit', 'report', 'file'],
+            'biznes': ['business', 'company', 'firm', 'enterprise'],
+            'tatim': ['tax', 'fiscal', 'payment', 'duty'],
+            'dokument': ['document', 'form', 'paper', 'file']
+        };
+
+        // Check for related terms
+        Object.entries(relatedTerms).forEach(([term, related]) => {
+            if (searchTerm.includes(term) || related.some(r => searchTerm.includes(r))) {
+                if (searchableText.includes(term)) {
+                    score += 2; // Boost score for related term matches
+                }
+            }
+        });
+
+        return { ...video, score };
+    });
+
+    // Filter results with any score and sort by score
+    const results = scoredResults
+        .filter(result => result.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+    // Update results count with appropriate message
+    const countElement = document.getElementById('resultsCount');
+    if (results.length > 0) {
+        countElement.textContent = `${results.length} rezultate u gjetën`;
+        countElement.style.color = 'rgba(255, 255, 255, 0.8)';
+    } else {
+        countElement.innerHTML = `
+            Nuk u gjetën rezultate për "${searchTerm}".<br>
+            Ju sugjerojmë të shikoni tutorialet tona më të fundit:
+        `;
+        countElement.style.color = '#00fdb1';
+        // Show all videos when no results are found
+        results.push(...videoData);
+    }
+
+    // Clear existing results
+    searchResults.innerHTML = '';
+
+    // Display results
+    results.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.setAttribute('data-video-id', video.id);
+        
+        videoCard.innerHTML = `
+            <div class="video-thumbnail">
+                <img src="${video.thumbnail}" alt="${video.title}">
+            </div>
+            <h3>${video.title}</h3>
+            ${video.score > 0 ? `<div class="relevance-score">Përputhshmëria: ${Math.min(100, Math.round(video.score * 10))}%</div>` : ''}
+        `;
+
+        // Add click event for modal
+        videoCard.addEventListener('click', () => {
+            const modal = document.querySelector('.video-modal');
+            const player = document.querySelector('.youtube-player');
+            player.src = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        searchResults.appendChild(videoCard);
+    });
+}
+
+// Initialize search results if on search page
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize menu
     window.menuHandler = new MenuHandler();
+    
+    // Initialize search results if on search page
+    displaySearchResults();
     
     // Initialize chatbot
     const initialMessage = document.querySelector('.message.bot .message-content');
@@ -255,47 +464,6 @@ document.addEventListener('click', (e) => {
         chatbotWidget.classList.remove('active');
     }
 });
-
-// Search Functionality
-function handleSearch(event) {
-    if (event) {
-        event.preventDefault();
-    }
-    const searchInput = document.getElementById('searchInput');
-    const searchTerm = searchInput.value.trim();
-    
-    if (searchTerm) {
-        // Here you can implement the search functionality
-        console.log('Performing search for:', searchTerm);
-        
-        // Example: You can redirect to a search results page
-        // window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-        
-        // Store the search term before clearing input
-        const searchedTerm = searchTerm;
-        
-        // Clear the input and remove focus
-        searchInput.value = '';
-        searchInput.blur();
-        
-        // Show feedback that search was performed
-        const speechHandler = window.speechHandler;
-        if (speechHandler) {
-            speechHandler.showFeedback(`Duke kërkuar: "${searchedTerm}"`);
-            
-            // Optional: Show a "no results" message after a delay
-            setTimeout(() => {
-                speechHandler.showFeedback('Nuk u gjetën rezultate për këtë kërkim.');
-            }, 2000);
-        }
-    } else {
-        // Show feedback for empty search
-        const speechHandler = window.speechHandler;
-        if (speechHandler) {
-            speechHandler.showFeedback('Ju lutem shkruani diçka për të kërkuar.');
-        }
-    }
-}
 
 // Speech Recognition Configuration
 class SpeechRecognitionHandler {

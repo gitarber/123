@@ -43,6 +43,7 @@
     width: 100%;
     flex: 1;
     overflow: hidden;
+    max-height: 65%;
 }
 
 .video-thumbnail img {
@@ -131,12 +132,14 @@
 @media (max-width: 1200px) {
     .videos-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
     }
 }
 
 @media (max-width: 900px) {
     .videos-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
 }
 
@@ -153,26 +156,117 @@
     .modal-content {
         width: 95%;
     }
+
+    .search-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-info p {
+        font-size: 1rem;
+    }
+
+    .relevance-score {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        top: 0.4rem;
+        right: 0.4rem;
+    }
 }
 
 @media (max-width: 480px) {
     .videos-content {
         padding: 1rem;
         padding-top: 4rem;
+        padding-bottom: 4rem;
     }
 
     .videos-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+        text-align: center;
+    }
+
+    .video-card {
+        aspect-ratio: 16/10;
+    }
+
+    .video-thumbnail {
+        max-height: 60%;
     }
 
     .video-card h3 {
         padding: 0.75rem;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.3;
+        max-height: 40%;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .modal-content {
         width: 100%;
         border-radius: 0;
     }
+
+    .search-info {
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+    }
+
+    .search-info p {
+        font-size: 0.9rem;
+    }
+}
+
+.search-info {
+    width: 100%;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.search-info p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+#searchQuery {
+    color: #00fdb1;
+    font-weight: 500;
+}
+
+#resultsCount {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 600px;
+    margin: 0.5rem auto;
+    line-height: 1.5;
+}
+
+.relevance-score {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0, 253, 177, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #00fdb1;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 253, 177, 0.3);
+    z-index: 2;
+}
+
+.video-card {
+    position: relative;
+    overflow: visible;
 } 
