@@ -18,19 +18,23 @@
 /* Add inner container for content width control */
 .videos-grid {
     width: 100%;
-    max-width: 1400px; /* Maximum content width */
+    max-width: 800px; /* Reduced max-width for better readability */
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
 }
 
 .page-title {
-    width: 100%;
-    max-width: 1400px; /* Match grid max-width */
-    margin: 0 auto 3rem auto;
+    font-size: 2rem;
+    margin: 2rem 0;
     text-align: center;
+    background: linear-gradient(45deg, #ffffff, #00fdb1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }
 
 /* Custom Scrollbar Styling */
@@ -59,42 +63,59 @@
     overflow: hidden;
     cursor: pointer;
     position: relative;
-    transition: transform 0.3s ease;
-    aspect-ratio: 16/12;
+    transition: all 0.3s ease;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Change to row layout */
+    height: 140px; /* Fixed height */
+    border: 1px solid rgba(27, 179, 129, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .video-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
+    background: rgba(27, 179, 129, 0.1);
+    border-color: rgba(27, 179, 129, 0.3);
 }
 
 .video-thumbnail {
+    width: 220px; /* Fixed width for thumbnail */
+    min-width: 220px; /* Ensure minimum width */
+    height: 100%;
     position: relative;
-    width: 100%;
-    flex: 1;
     overflow: hidden;
-    max-height: 65%;
 }
 
 .video-thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
 }
 
-.video-card:hover .video-thumbnail img {
-    transform: scale(1.05);
+.video-content {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .video-card h3 {
-    padding: 1rem;
-    color: white;
     font-size: 1rem;
     font-weight: 500;
-    margin: 0;
+    margin: 0 0 0.5rem 0;
     line-height: 1.4;
+    color: white;
+}
+
+.video-description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .video-link {
@@ -162,21 +183,74 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .videos-content {
-        padding: 5rem 0 1.5rem 1.5rem;
+        padding: 5rem 1rem 1rem 1rem;
     }
-    
+
     .videos-grid {
-        padding-right: 1.5rem;
+        padding: 0.5rem;
+    }
+
+    .video-card {
+        height: 120px;
+    }
+
+    .video-thumbnail {
+        width: 160px;
+        min-width: 160px;
+    }
+
+    .video-content {
+        padding: 0.75rem;
+    }
+
+    .video-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .video-description {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 2;
     }
 }
 
 @media (max-width: 480px) {
     .videos-content {
-        padding: 4rem 0 1rem 1rem;
+        padding: 4rem 0.5rem 1rem 0.5rem;
     }
-    
+
     .videos-grid {
-        padding-right: 1rem;
+        padding: 0.5rem;
+    }
+
+    .video-card {
+        height: 110px;
+    }
+
+    .video-thumbnail {
+        width: 120px;
+        min-width: 120px;
+    }
+
+    .video-content {
+        padding: 0.5rem;
+    }
+
+    .video-card h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .video-description {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 2;
+    }
+
+    .relevance-score {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        top: 0.25rem;
+        right: 0.25rem;
     }
 }
 
@@ -222,4 +296,21 @@
 .video-card {
     position: relative;
     overflow: visible;
+}
+
+/* Add category tags */
+.video-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.tag {
+    background: rgba(27, 179, 129, 0.15);
+    color: #00fdb1;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(27, 179, 129, 0.3);
 } 
