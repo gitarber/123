@@ -208,10 +208,13 @@
         grid-template-columns: 1fr;
         padding: 1rem;
         gap: 1rem;
+        margin: 0 auto;
+        max-width: 600px;
     }
 
     .videos-content {
         padding: 4rem 1rem 1rem 1rem;
+        padding-right: calc(1rem + 6px);
     }
 
     .video-card h3 {
@@ -235,11 +238,14 @@
 @media (max-width: 480px) {
     .videos-content {
         padding: 3rem 0.5rem 1rem 0.5rem;
+        padding-right: calc(0.5rem + 6px);
     }
 
     .videos-grid {
         padding: 0.5rem;
         gap: 1rem;
+        margin: 0 auto;
+        max-width: 400px;
     }
 
     .video-card h3 {
