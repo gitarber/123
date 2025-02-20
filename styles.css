@@ -10,7 +10,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0a0a0a;
+    background: #000000;
     color: white;
     position: relative;
     overflow: hidden;
@@ -29,7 +29,7 @@ body {
     position: fixed;
     font-size: clamp(3rem, 20vw, 20rem);
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.15);
     white-space: nowrap;
     z-index: 0;
     user-select: none;
@@ -37,17 +37,17 @@ body {
     text-transform: uppercase;
     font-family: 'Segoe UI', sans-serif;
     letter-spacing: 0.2em;
-    background: linear-gradient(45deg, rgba(33,150,243,0.15), rgba(0,188,212,0.15));
+    background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-stroke: 2px rgba(33,150,243,0.1);
+    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
 }
 
 .floating-text-diagonal-1 {
     position: fixed;
     font-size: clamp(2rem, 15vw, 15rem);
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.15);
     white-space: nowrap;
     z-index: 0;
     user-select: none;
@@ -55,10 +55,10 @@ body {
     text-transform: uppercase;
     font-family: 'Segoe UI', sans-serif;
     letter-spacing: 0.2em;
-    background: linear-gradient(45deg, rgba(33,150,243,0.15), rgba(0,188,212,0.15));
+    background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-stroke: 2px rgba(33,150,243,0.1);
+    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
     transform-origin: top left;
 }
 
@@ -66,7 +66,7 @@ body {
     position: fixed;
     font-size: clamp(2rem, 15vw, 15rem);
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.15);
     white-space: nowrap;
     z-index: 0;
     user-select: none;
@@ -74,10 +74,10 @@ body {
     text-transform: uppercase;
     font-family: 'Segoe UI', sans-serif;
     letter-spacing: 0.2em;
-    background: linear-gradient(45deg, rgba(33,150,243,0.15), rgba(0,188,212,0.15));
+    background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-stroke: 2px rgba(33,150,243,0.1);
+    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
     transform-origin: top right;
 }
 
@@ -87,8 +87,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, #000428, #004e92);
-    opacity: 0.75;
+    background: linear-gradient(45deg, #000000, #111111);
+    opacity: 0.6;
     animation: gradientAnimation 15s ease infinite;
 }
 
@@ -121,11 +121,11 @@ body {
 
 .search-container {
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 253, 177, 0.1);
     border-radius: 20px;
     padding: 3rem;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(0, 253, 177, 0.2);
     max-width: 90%;
     margin: 0 auto;
     width: 100%;
@@ -135,25 +135,25 @@ body {
 h1 {
     font-size: 3rem;
     margin-bottom: 2rem;
-    background: linear-gradient(45deg, #ffffff, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #ffffff, #00fdb1, #00d999);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: titleGlow 2s ease-in-out infinite alternate;
     letter-spacing: 2px;
     font-weight: 800;
-    text-shadow: 0 0 30px rgba(33,150,243,0.5);
+    text-shadow: 0 0 30px rgba(0, 253, 177, 0.5);
 }
 
 .search-box {
     display: flex;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 253, 177, 0.1);
     border-radius: 50px;
     padding: 8px;
     max-width: 600px;
     margin: 0 auto;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 253, 177, 0.2);
     align-items: center;
 }
 
@@ -174,7 +174,7 @@ h1 {
 }
 
 .search-button {
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
     border: none;
     border-radius: 50%;
     width: 46px;
@@ -219,11 +219,11 @@ h1 {
 
 @keyframes titleGlow {
     from {
-        text-shadow: 0 0 20px rgba(33,150,243,0.4);
+        text-shadow: 0 0 20px rgba(0, 253, 177, 0.4);
         filter: brightness(1);
     }
     to {
-        text-shadow: 0 0 40px rgba(33,150,243,0.7);
+        text-shadow: 0 0 40px rgba(0, 253, 177, 0.7);
         filter: brightness(1.2);
     }
 }
@@ -318,7 +318,7 @@ h1 {
     .floating-text-diagonal-1,
     .floating-text-diagonal-2 {
         letter-spacing: 0.1em;
-        -webkit-text-stroke: 1px rgba(33,150,243,0.1);
+        -webkit-text-stroke: 1px rgba(255,255,255,0.15);
     }
 }
 
@@ -341,7 +341,7 @@ h1 {
 
     .search-box {
         padding: 0;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(0, 253, 177, 0.1);
         border-radius: 25px;
     }
 
@@ -358,7 +358,7 @@ h1 {
     
     /* Style for when input is focused */
     .search-box input:focus {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(0, 253, 177, 0.15);
     }
 
     .floating-text {
@@ -438,16 +438,16 @@ h1 {
     justify-content: center;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
     border-radius: 50%;
     padding: 12px;
     transition: all 0.1s ease;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 253, 177, 0.3);
 }
 
 .menu-icon:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 253, 177, 0.4);
 }
 
 .menu-icon span {
@@ -504,7 +504,7 @@ h1 {
     right: -320px;
     width: 320px;
     height: 100vh;
-    background: linear-gradient(135deg, rgba(0, 4, 40, 0.95), rgba(0, 78, 146, 0.95));
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(17, 17, 17, 0.95));
     z-index: 99;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
@@ -549,9 +549,9 @@ h1 {
 }
 
 .auth-btn.signup {
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
     color: white;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 253, 177, 0.3);
 }
 
 .auth-btn:hover {
@@ -563,7 +563,7 @@ h1 {
 }
 
 .auth-btn.signup:hover {
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 253, 177, 0.4);
 }
 
 .nav-links {
@@ -633,17 +633,17 @@ h1 {
     position: fixed;
     font-size: clamp(2.5rem, 12vw, 12rem);
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.15);
     white-space: nowrap;
     z-index: 0;
     user-select: none;
     text-transform: uppercase;
     font-family: 'Segoe UI', sans-serif;
     letter-spacing: 0.1em;
-    background: linear-gradient(45deg, rgba(33,150,243,0.15), rgba(0,188,212,0.15));
+    background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-stroke: 2px rgba(33,150,243,0.1);
+    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
 }
 
 .row1 {
@@ -722,18 +722,18 @@ h1 {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 253, 177, 0.3);
     transition: all 0.3s ease;
 }
 
 .chatbot-button:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 253, 177, 0.4);
 }
 
 .chatbot-button svg {
@@ -760,7 +760,7 @@ h1 {
     right: 0;
     width: 350px;
     height: 500px;
-    background: linear-gradient(135deg, rgba(0, 4, 40, 0.95), rgba(0, 78, 146, 0.95));
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(17, 17, 17, 0.95));
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     display: flex;
@@ -796,7 +796,7 @@ h1 {
 .chatbot-title svg {
     width: 20px;
     height: 20px;
-    color: #2196f3;
+    color: #00fdb1;
 }
 
 .chat-messages {
@@ -834,7 +834,7 @@ h1 {
 }
 
 .message.user .message-content {
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
 }
 
 .chat-input {
@@ -864,7 +864,7 @@ h1 {
     height: 40px;
     min-width: 40px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #2196f3, #00bcd4);
+    background: linear-gradient(45deg, #00fdb1, #00d999);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1054,8 +1054,8 @@ h1 {
 
 /* Active State */
 .voice-button.listening {
-    background: rgba(33, 150, 243, 0.2);
-    border-color: rgba(33, 150, 243, 0.3);
+    background: rgba(0, 253, 177, 0.2);
+    border-color: rgba(0, 253, 177, 0.3);
 }
 
 .voice-button.listening .voice-indicator svg {
@@ -1104,7 +1104,7 @@ h1 {
     .voice-indicator svg {
         width: 20px;
         height: 20px;
-        color: #2196f3;
+        color: #00fdb1;
         opacity: 1;
     }
     
