@@ -67,6 +67,7 @@
     position: relative;
     transition: all 0.3s ease;
     width: 100%;
+    height: auto;
     max-width: 250px;
     aspect-ratio: 16/9;
     border: 2px solid rgba(27, 179, 129, 0.2);
@@ -207,10 +208,8 @@
 @media (max-width: 768px) {
     .videos-grid {
         grid-template-columns: 1fr;
-        padding: 1rem;
-        gap: 1rem;
+        padding: 0;
         margin: 0 auto;
-        max-width: 600px;
     }
 
     .videos-content {
