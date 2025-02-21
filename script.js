@@ -70,32 +70,81 @@ class MenuHandler {
 const videoData = [
     {
         id: '60jZKH9q_RA',
-        title: 'Si të regjistroheni në e-Albania',
-        description: 'Udhëzues i plotë për regjistrimin në platformën e-Albania',
+        title: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
+        description: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
         thumbnail: 'thumbnails/e-albania/1.png',
         category: 'e-albania'
     },
     {
         id: 'rsROpcHbT_Y',
-        title: 'Aplikimi për NIPT',
-        description: 'Si të aplikoni për NIPT në platformën e-Albania',
+        title: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania',
+        description: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania ?',
         thumbnail: 'thumbnails/e-albania/2.png',
         category: 'e-albania'
     },
     {
         id: 'TnCy5Qze1pI',
-        title: 'Deklarimi i punonjësve të rinj',
-        description: 'Procedura e deklarimit të punonjësve të rinj në e-Albania',
+        title: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
+        description: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
         thumbnail: 'thumbnails/e-albania/3.png',
         category: 'e-albania'
     },
     {
         id: 'nHipbjjsGMM',
-        title: 'Gjenerimi i vërtetimeve për biznesin',
-        description: 'Si të gjeneroni vërtetime për biznesin tuaj në e-Albania',
+        title: 'Si të shtoj TVSH si përgjegjësi tatimore në e-Albania e biznesit ',
+        description: 'Si të shtoj TVSH si përgjegjësi tatimore në e-Albania e biznesit ?',
         thumbnail: 'thumbnails/e-albania/4.png',
         category: 'e-albania'
-    }
+    },
+    {
+        id: 'R9-YZqG5ue0',
+        title: 'A nevojitet nënshkrimi elektronik për ndryshimin e adresës',
+        description: 'A nevojitet nënshkrimi elektronik për ndryshimin e adresës ?',
+        thumbnail: 'thumbnails/e-albania/5.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'farGSJaxhoc',
+        title: 'Si të shkarkojmë një vërtetim që nuk kemi detyrime biznesi ?',
+        description: 'Si të shkarkojmë një vërtetim që nuk kemi detyrime biznesi ?',
+        thumbnail: 'thumbnails/e-albania/6.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'TRbIIOoEZbQ',
+        title: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania',
+        description: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania ?',
+        thumbnail: 'thumbnails/e-albania/7.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'p2DWTp84Y8o',
+        title: 'Si të shkarkojmë vërtetimin e pagesës së kontributeve në vite nga e-Albania?',
+        description: 'Si të shkarkojmë vërtetimin e pagesës së kontributeve në vite nga e-Albania?',
+        thumbnail: 'thumbnails/e-albania/8.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'swiJ7_cCUVs',
+        title: 'Ndryshimi i kategorisë së biznesit që të bëjmë fatura falas nga selfcare?',
+        description: 'Ndryshimi i kategorisë së biznesit që të bëjmë fatura falas nga selfcare?',
+        thumbnail: 'thumbnails/e-albania/9.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'hFg2NT2Wg3I',
+        title: 'Si të ndryshojmë kategorinë e punësimit të biznesit nga e albania ?',
+        description: 'Si të ndryshojmë kategorinë e punësimit të biznesit nga e albania ?',
+        thumbnail: 'thumbnails/e-albania/11.png',
+        category: 'e-albania'
+    },
+    {
+        id: 'RS9fHh0E4ZU',
+        title: 'Si të hapim një nipt ose adresë sekondare',
+        description: 'Si të hapim një nipt ose adresë sekondare ?',
+        thumbnail: 'thumbnails/e-albania/10.png',
+        category: 'e-albania'
+    },
     // Add other videos here...
 ];
 
