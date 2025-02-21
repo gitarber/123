@@ -20,6 +20,7 @@
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    width: 100%;
 }
 
 .category h2 {
@@ -76,8 +77,14 @@
 
 .widget-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Two widgets per row on mobile */
     gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .widget-grid {
+        grid-template-columns: repeat(4, 1fr); /* Four widgets per row on larger screens */
+    }
 }
 
 .widget {
