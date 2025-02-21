@@ -68,7 +68,7 @@
     transition: all 0.3s ease;
     width: 100%;
     height: auto;
-    max-width: 250px;
+    max-width: 310px;
     aspect-ratio: 16/9;
     border: 2px solid rgba(27, 179, 129, 0.2);
     backdrop-filter: blur(10px);
@@ -207,9 +207,9 @@
 
 @media (max-width: 768px) {
     .videos-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 3fr;
         padding: 0;
-        margin: 0 auto;
+        margin:  auto;
     }
 
     .videos-content {
@@ -230,7 +230,7 @@
     }
 
     .page-title {
-        font-size: 2.5rem;
+        font-size: 1.5rem;
         margin: 1.5rem 0;
     }
 }
@@ -245,7 +245,7 @@
         padding: 0.5rem;
         gap: 1rem;
         margin: 0 auto;
-        max-width: 400px;
+        max-width: 800px;
     }
 
     .video-card h3 {
