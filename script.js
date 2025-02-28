@@ -73,77 +73,88 @@ const videoData = [
         title: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
         description: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
         thumbnail: 'thumbnails/e-albania/1.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['ndryshimi', 'adresës', 'biznesit', 'e-albania']
     },
     {
         id: 'rsROpcHbT_Y',
         title: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania',
         description: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania ?',
         thumbnail: 'thumbnails/e-albania/2.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['tatim', 'bizneset', 'e-albania']
     },
     {
         id: 'TnCy5Qze1pI',
         title: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
         description: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
         thumbnail: 'thumbnails/e-albania/3.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['tatimore', 'biznesit', 'e-Albania']
     },
     {
         id: 'nHipbjjsGMM',
         title: 'Si të shtoj TVSH si përgjegjësi tatimore në e-Albania e biznesit ',
         description: 'Si të shtoj TVSH si përgjegjësi tatimore në e-Albania e biznesit ?',
         thumbnail: 'thumbnails/e-albania/4.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['TVSH', 'tatimore', 'biznesit', 'e-Albania']
     },
     {
         id: 'R9-YZqG5ue0',
         title: 'A nevojitet nënshkrimi elektronik për ndryshimin e adresës',
         description: 'A nevojitet nënshkrimi elektronik për ndryshimin e adresës ?',
         thumbnail: 'thumbnails/e-albania/5.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['ndryshimi', 'adresës', 'elektronik']
     },
     {
         id: 'farGSJaxhoc',
         title: 'Si të shkarkojmë një vërtetim që nuk kemi detyrime biznesi ?',
         description: 'Si të shkarkojmë një vërtetim që nuk kemi detyrime biznesi ?',
         thumbnail: 'thumbnails/e-albania/6.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['vërtetim', 'biznesi']
     },
     {
         id: 'TRbIIOoEZbQ',
         title: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania',
         description: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania ?',
         thumbnail: 'thumbnails/e-albania/7.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['tatim', 'bizneset', 'e-albania']
     },
     {
         id: 'p2DWTp84Y8o',
         title: 'Si të shkarkojmë vërtetimin e pagesës së kontributeve në vite nga e-Albania?',
         description: 'Si të shkarkojmë vërtetimin e pagesës së kontributeve në vite nga e-Albania?',
         thumbnail: 'thumbnails/e-albania/8.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['vërtetim', 'pagesës', 'kontributeve', 'e-Albania']
     },
     {
         id: 'swiJ7_cCUVs',
         title: 'Ndryshimi i kategorisë së biznesit që të bëjmë fatura falas nga selfcare?',
         description: 'Ndryshimi i kategorisë së biznesit që të bëjmë fatura falas nga selfcare?',
         thumbnail: 'thumbnails/e-albania/9.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['ndryshimi', 'kategorisë', 'biznesit', 'fatura', 'selfcare']
     },
     {
         id: 'hFg2NT2Wg3I',
         title: 'Si të ndryshojmë kategorinë e punësimit të biznesit nga e albania ?',
         description: 'Si të ndryshojmë kategorinë e punësimit të biznesit nga e albania ?',
         thumbnail: 'thumbnails/e-albania/11.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['ndryshimi', 'kategorinë', 'punësimit', 'biznesit', 'e-albania']
     },
     {
         id: 'RS9fHh0E4ZU',
         title: 'Si të hapim një nipt ose adresë sekondare',
         description: 'Si të hapim një nipt ose adresë sekondare ?',
         thumbnail: 'thumbnails/e-albania/10.png',
-        category: 'e-albania'
+        category: 'e-albania',
+        keywords: ['nipt', 'adresë', 'sekondare']
     },
     // Add other videos here...
 ];
@@ -196,7 +207,7 @@ function displaySearchResults() {
 
         // Check for keyword matches
         keywords.forEach(keyword => {
-            // Score based on keyword presence
+            // Score based on keyword presence in title, description, and category
             if (video.title.toLowerCase().includes(keyword)) {
                 score += 5; // Higher score for title matches
             }
@@ -205,6 +216,10 @@ function displaySearchResults() {
             }
             if (video.category.toLowerCase().includes(keyword)) {
                 score += 2; // Lower score for category matches
+            }
+            // Check against keywords
+            if (video.keywords && video.keywords.includes(keyword)) {
+                score += 4; // Additional score for keyword matches
             }
         });
 
