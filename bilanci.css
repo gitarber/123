@@ -1,0 +1,292 @@
+.tutorials-content {
+    position: relative;
+    z-index: 1;
+    width: 100vw; /* Full viewport width */
+    max-width: 100%; /* Remove max-width constraint */
+    margin: 0;
+    padding: 2rem;
+    height: calc(100vh - 4rem); /* Fixed height to enable scrolling */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-top: 2rem;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(27, 179, 129, 0.3) transparent;
+}
+
+.page-title {
+    width: 100%;
+    max-width: 1200px; /* Match grid max-width */
+    margin: 0 auto 3rem auto;
+    text-align: center;
+    font-size: 3rem;
+    background: linear-gradient(45deg, #ffffff, #00fdb1, #00d999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-shadow: 0 0 30px rgba(0, 253, 177, 0.5);
+}
+
+.tutorials-grid {
+    width: 100%;
+    max-width: 1200px; /* Maximum content width */
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding-bottom: 2rem;
+}
+
+.tutorial-card {
+    background: rgba(27, 179, 129, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    position: relative;
+}
+
+.tutorial-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        #1bb381 25%, 
+        #00fdb1 50%, 
+        #1bb381 75%, 
+        transparent 100%
+    );
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    background-size: 300% 100%;
+    animation: moveGradient 10s linear infinite;
+    pointer-events: none;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+    background: rgba(27, 179, 129, 0.15);
+}
+
+.tutorial-card:active {
+    transform: translateY(-2px);
+}
+
+@keyframes moveGradient {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, rgba(27, 179, 129, 0.2), rgba(0, 253, 177, 0.2));
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.tutorial-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+/* Keep existing image placeholder styles for cards without images */
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(27, 179, 129, 0.2), rgba(0, 253, 177, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.card-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.card-content p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.card-content a {
+    display: inline-block; /* Make the link behave like a button */
+    padding: 10px 20px; /* Add padding for a better look */
+    background-color: #00fdb1; /* Button background color */
+    color: white; /* Text color */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make text bold */
+    transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.card-content a:hover {
+    background-color: #1bb381; /* Darker shade on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.card-content a:active {
+    transform: translateY(0); /* Reset lift effect on click */
+}
+
+/* Active nav link style */
+.nav-link.active {
+    background: rgba(27, 179, 129, 0.2);
+    border: 1px solid rgba(27, 179, 129, 0.3);
+}
+
+/* Ensure the background stays fixed while content scrolls */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Adjust body to enable proper scrolling */
+body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tutorials-content {
+        padding: 5rem 0 1.5rem 1.5rem;
+    }
+    
+    .tutorials-grid {
+        padding-right: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .tutorials-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tutorials-content {
+        padding: 4rem 0 1rem 1rem;
+    }
+    
+    .tutorials-grid {
+        padding-right: 1rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tutorials-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .card-image {
+        height: 180px;
+    }
+
+    .card-content {
+        padding: 1.25rem;
+    }
+}
+
+/* Custom Scrollbar Styling */
+.tutorials-content::-webkit-scrollbar {
+    width: 6px;
+    background-color: transparent;
+}
+
+.tutorials-content::-webkit-scrollbar-thumb {
+    background: rgba(27, 179, 129, 0.3);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.tutorials-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(27, 179, 129, 0.5);
+}
+
+.tutorials-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Ensure smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tutorial-card:hover .overlay {
+    opacity: 1; /* Show overlay on hover */
+}
+
+.tutorial-card:hover img {
+    transform: scale(1.05); /* Scale effect on hover */
+} 
