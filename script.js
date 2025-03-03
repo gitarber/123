@@ -371,8 +371,20 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault(); // Prevent form submission
 
         // Get the input values
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        // Check if inputs exist
+        console.log('Email Input:', emailInput);
+        console.log('Password Input:', passwordInput);
+
+        if (!emailInput || !passwordInput) {
+            errorMessage.textContent = 'Login form is not properly initialized.';
+            return;
+        }
+
+        const email = emailInput.value;
+        const password = passwordInput.value;
 
         // Form validation for email format
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -403,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('isLoggedIn', 'true');
 
             // Redirect to the landing page or main content
-            window.location.href = 'landing.html'; // Change this to your landing page URL
+            window.location.href = 'index.html'; // Change this to your landing page URL
         } else {
             errorMessage.textContent = 'Invalid email or password. Please try again.';
         }
