@@ -1,3 +1,310 @@
+// Speech Recognition Configuration
+class SpeechRecognitionHandler {
+    constructor() {
+        this.isListening = false;
+        this.recognition = null;
+        this.voiceButton = document.getElementById('voiceButton');
+        this.searchInput = document.getElementById('searchInput');
+        this.searchTimeout = null;
+        this.countdownInterval = null;
+        this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        this.isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        
+        // Only initialize the recognition object, don't request permissions yet
+        this.initRecognition().then(() => {
+            this.bindEvents();
+        }).catch(error => {
+            console.error('Failed to initialize recognition:', error);
+            if (this.voiceButton) {
+                this.voiceButton.style.display = 'none';
+            }
+        });
+    }
+
+    async initRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            throw new Error('Speech recognition not supported');
+        }
+
+        // Initialize recognition object without starting it
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SpeechRecognition();
+        
+        // Configure recognition settings
+        this.recognition.lang = 'sq-AL';
+        this.recognition.continuous = false;
+        this.recognition.interimResults = true;
+        this.recognition.maxAlternatives = 1;
+
+        // Set up event handlers
+        this.recognition.onstart = this.handleStart.bind(this);
+        this.recognition.onend = this.handleEnd.bind(this);
+        this.recognition.onresult = this.handleResult.bind(this);
+        this.recognition.onerror = this.handleError.bind(this);
+        this.recognition.onnomatch = this.handleNoMatch.bind(this);
+    }
+
+    async requestMicrophonePermission() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Store the stream reference to keep the permission active
+            if (!window.streamReference) {
+                window.streamReference = stream;
+            }
+            return true;
+        } catch (error) {
+            console.error('Microphone permission error:', error);
+            if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+                this.showFeedback('Please allow microphone access to use voice commands');
+            }
+            return false;
+        }
+    }
+
+    bindEvents() {
+        if (this.voiceButton) {
+            this.voiceButton.addEventListener('click', async () => {
+                if (!this.recognition) {
+                    this.showFeedback('Speech recognition not supported in your browser');
+                    return;
+                }
+
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    // Only request permission when the user clicks the button
+                    if (this.isIOS) {
+                        const permissionGranted = await this.requestMicrophonePermission();
+                        if (!permissionGranted) {
+                            return;
+                        }
+                    }
+                    this.startListening();
+                }
+            });
+        }
+    }
+
+    startCountdown() {
+        // Clear any existing timeouts and intervals
+        this.clearTimers();
+        
+        let countdown = 3;
+        this.showFeedback(`Kërkimi fillon për... ${countdown}`);
+
+        // Store the search term at the start of countdown
+        const searchTerm = this.searchInput.value.trim();
+        if (!searchTerm) {
+            return; // Don't start countdown if there's no text
+        }
+
+        this.countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                this.showFeedback(`Kërkimi fillon për... ${countdown}`);
+            } else {
+                // Clear the interval when countdown reaches 0
+                clearInterval(this.countdownInterval);
+                this.countdownInterval = null;
+            }
+        }, 1000);
+
+        this.searchTimeout = setTimeout(() => {
+            this.clearTimers();
+            // Only perform search if the text hasn't changed
+            if (this.searchInput.value.trim() === searchTerm) {
+                handleSearch(new Event('submit'));
+            }
+        }, 3000);
+    }
+
+    clearTimers() {
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+        }
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
+    async startListening() {
+        try {
+            this.clearTimers();
+            
+            // Hide keyboard on mobile
+            if (this.isMobile) {
+                this.searchInput.blur();
+            }
+
+            // Start recognition
+            await this.recognition.start();
+            this.isListening = true;
+            this.voiceButton.classList.add('listening');
+            this.showFeedback(this.isMobile ? 'Tap to stop...' : 'Listening...');
+        } catch (error) {
+            console.error('Start listening error:', error);
+            this.handleError({ error: 'start-error' });
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
+        }
+    }
+
+    stopListening() {
+        try {
+            this.clearTimers();
+            this.recognition.stop();
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
+            
+            // Prevent keyboard from showing on mobile
+            if (this.isMobile) {
+                this.searchInput.blur();
+            }
+
+            // Ensure we start the countdown if we have text when manually stopping
+            if (this.searchInput.value.trim()) {
+                this.startCountdown();
+            }
+        } catch (error) {
+            console.error('Error stopping recognition:', error);
+            // Reset state even if there's an error
+            this.isListening = false;
+            this.voiceButton.classList.remove('listening');
+            this.clearTimers();
+        }
+    }
+
+    handleStart() {
+        this.isListening = true;
+        this.voiceButton.classList.add('listening');
+        this.searchInput.placeholder = 'Duke dëgjuar...';
+        
+        // Clear any existing text when starting new recognition
+        if (this.isMobile) {
+            this.searchInput.value = '';
+            this.searchInput.blur();
+        }
+    }
+
+    handleEnd() {
+        this.isListening = false;
+        this.voiceButton.classList.remove('listening');
+        this.searchInput.placeholder = 'Search anything...';
+        
+        // If we have text in the input, start the countdown for search
+        if (this.searchInput.value.trim()) {
+            this.startCountdown();
+        } else if (!this.searchTimeout) {
+            // Only show no speech message if no text was captured and no timeout is pending
+            this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
+        }
+    }
+
+    handleResult(event) {
+        const results = Array.from(event.results);
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        results.forEach(result => {
+            if (result.isFinal) {
+                finalTranscript += result[0].transcript;
+            } else {
+                interimTranscript += result[0].transcript;
+            }
+        });
+
+        // Update the search input with transcribed text
+        const transcribedText = finalTranscript || interimTranscript;
+        if (transcribedText) {
+            this.searchInput.value = transcribedText;
+            
+            // On iOS, we need to manually trigger the end if we have a final result
+            if (finalTranscript && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                this.stopListening();
+                this.startCountdown();
+            }
+        }
+    }
+
+    handleError(event) {
+        this.isListening = false;
+        this.voiceButton.classList.remove('listening');
+        console.error('Speech recognition error:', event.error);
+
+        let message = '';
+        
+        switch (event.error) {
+            case 'no-speech':
+                message = 'No speech detected. Please try speaking again.';
+                break;
+            case 'audio-capture':
+            case 'not-allowed':
+                message = this.isIOS ? 
+                    'Please allow microphone access in Settings > Safari > Microphone' :
+                    'Please allow microphone access to use voice commands';
+                break;
+            case 'network':
+                message = 'Network error. Please check your connection and try again.';
+                break;
+            case 'aborted':
+                message = 'Voice recognition was stopped. Tap the mic to try again.';
+                break;
+            case 'language-not-supported':
+                message = 'This language is not supported. Please try another browser.';
+                break;
+            case 'service-not-allowed':
+                message = this.isIOS ?
+                    'Please enable voice recognition in Settings > Safari > Microphone' :
+                    'Voice recognition service is not available. Please try again later.';
+                break;
+            case 'start-error':
+                message = this.isIOS ?
+                    'Please close and reopen Safari, then try again' :
+                    'Error starting voice recognition. Please refresh and try again.';
+                break;
+            default:
+                message = this.isIOS ?
+                    'Please check microphone permissions in Settings > Safari > Microphone' :
+                    'An unexpected error occurred. Please try again.';
+        }
+        
+        this.showFeedback(message);
+    }
+
+    handleNoMatch() {
+        this.showFeedback('Could not recognize speech. Please try again.');
+    }
+
+    showFeedback(message) {
+        // Remove any existing feedback first
+        const existingFeedback = document.querySelector('.voice-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+
+        // Create a new feedback element
+        const feedback = document.createElement('div');
+        feedback.className = 'voice-feedback';
+        if (this.isMobile) {
+            feedback.className += ' mobile';
+        }
+        feedback.textContent = message;
+        
+        // Position it near the search box
+        const searchContainer = document.querySelector('.search-container');
+        searchContainer.appendChild(feedback);
+        
+        // Only auto-remove feedback if it's not a countdown message
+        if (!message.includes('Kërkimi fillon për...')) {
+            setTimeout(() => {
+                feedback.remove();
+            }, this.isMobile ? 2000 : 3000);
+        }
+    }
+}
+
 // Menu Functionality
 class MenuHandler {
     constructor() {
@@ -295,7 +602,7 @@ function displaySearchResults() {
     });
 }
 
-// Initialize search results if on search page
+// DOMContentLoaded Event
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize menu
     window.menuHandler = new MenuHandler();
@@ -322,18 +629,25 @@ document.addEventListener('DOMContentLoaded', () => {
         initialMessage.textContent = AI_CONTEXT.commonPhrases.greeting;
     }
     
-    // Initialize speech recognition
-    try {
-        window.speechHandler = new SpeechRecognitionHandler();
-        console.log('Speech recognition initialized successfully');
-    } catch (error) {
-        console.error('Failed to initialize speech recognition:', error);
+    // Check for speech recognition support
+    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
         const voiceButton = document.getElementById('voiceButton');
         if (voiceButton) {
             // Keep the button visible
             voiceButton.style.display = 'block';
             // Provide feedback to the user
-            alert('Speech recognition is not supported in this browser.');
+            const message = document.createElement('div');
+            message.className = 'error-message';
+            message.textContent = 'Speech recognition is not supported in this browser.';
+            voiceButton.parentNode.insertBefore(message, voiceButton.nextSibling);
+        }
+    } else {
+        // Initialize speech recognition
+        try {
+            window.speechHandler = new SpeechRecognitionHandler();
+            console.log('Speech recognition initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize speech recognition:', error);
         }
     }
 
@@ -589,311 +903,4 @@ Ju lutem jepni një përgjigje profesionale në gjuhën shqipe, bazuar në konte
             chatbotWidget.classList.remove('active');
         }
     });
-
-    // Speech Recognition Configuration
-    class SpeechRecognitionHandler {
-        constructor() {
-            this.isListening = false;
-            this.recognition = null;
-            this.voiceButton = document.getElementById('voiceButton');
-            this.searchInput = document.getElementById('searchInput');
-            this.searchTimeout = null;
-            this.countdownInterval = null;
-            this.isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            this.isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-            
-            // Only initialize the recognition object, don't request permissions yet
-            this.initRecognition().then(() => {
-                this.bindEvents();
-            }).catch(error => {
-                console.error('Failed to initialize recognition:', error);
-                if (this.voiceButton) {
-                    this.voiceButton.style.display = 'none';
-                }
-            });
-        }
-
-        async initRecognition() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                throw new Error('Speech recognition not supported');
-            }
-
-            // Initialize recognition object without starting it
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            this.recognition = new SpeechRecognition();
-            
-            // Configure recognition settings
-            this.recognition.lang = 'sq-AL';
-            this.recognition.continuous = false;
-            this.recognition.interimResults = true;
-            this.recognition.maxAlternatives = 1;
-
-            // Set up event handlers
-            this.recognition.onstart = this.handleStart.bind(this);
-            this.recognition.onend = this.handleEnd.bind(this);
-            this.recognition.onresult = this.handleResult.bind(this);
-            this.recognition.onerror = this.handleError.bind(this);
-            this.recognition.onnomatch = this.handleNoMatch.bind(this);
-        }
-
-        async requestMicrophonePermission() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                // Store the stream reference to keep the permission active
-                if (!window.streamReference) {
-                    window.streamReference = stream;
-                }
-                return true;
-            } catch (error) {
-                console.error('Microphone permission error:', error);
-                if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
-                    this.showFeedback('Please allow microphone access to use voice commands');
-                }
-                return false;
-            }
-        }
-
-        bindEvents() {
-            if (this.voiceButton) {
-                this.voiceButton.addEventListener('click', async () => {
-                    if (!this.recognition) {
-                        this.showFeedback('Speech recognition not supported in your browser');
-                        return;
-                    }
-
-                    if (this.isListening) {
-                        this.stopListening();
-                    } else {
-                        // Only request permission when the user clicks the button
-                        if (this.isIOS) {
-                            const permissionGranted = await this.requestMicrophonePermission();
-                            if (!permissionGranted) {
-                                return;
-                            }
-                        }
-                        this.startListening();
-                    }
-                });
-            }
-        }
-
-        startCountdown() {
-            // Clear any existing timeouts and intervals
-            this.clearTimers();
-            
-            let countdown = 3;
-            this.showFeedback(`Kërkimi fillon për... ${countdown}`);
-
-            // Store the search term at the start of countdown
-            const searchTerm = this.searchInput.value.trim();
-            if (!searchTerm) {
-                return; // Don't start countdown if there's no text
-            }
-
-            this.countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    this.showFeedback(`Kërkimi fillon për... ${countdown}`);
-                } else {
-                    // Clear the interval when countdown reaches 0
-                    clearInterval(this.countdownInterval);
-                    this.countdownInterval = null;
-                }
-            }, 1000);
-
-            this.searchTimeout = setTimeout(() => {
-                this.clearTimers();
-                // Only perform search if the text hasn't changed
-                if (this.searchInput.value.trim() === searchTerm) {
-                    handleSearch(new Event('submit'));
-                }
-            }, 3000);
-        }
-
-        clearTimers() {
-            if (this.searchTimeout) {
-                clearTimeout(this.searchTimeout);
-                this.searchTimeout = null;
-            }
-            if (this.countdownInterval) {
-                clearInterval(this.countdownInterval);
-                this.countdownInterval = null;
-            }
-        }
-
-        async startListening() {
-            try {
-                this.clearTimers();
-                
-                // Hide keyboard on mobile
-                if (this.isMobile) {
-                    this.searchInput.blur();
-                }
-
-                // Start recognition
-                await this.recognition.start();
-                this.isListening = true;
-                this.voiceButton.classList.add('listening');
-                this.showFeedback(this.isMobile ? 'Tap to stop...' : 'Listening...');
-            } catch (error) {
-                console.error('Start listening error:', error);
-                this.handleError({ error: 'start-error' });
-                this.isListening = false;
-                this.voiceButton.classList.remove('listening');
-            }
-        }
-
-        stopListening() {
-            try {
-                this.clearTimers();
-                this.recognition.stop();
-                this.isListening = false;
-                this.voiceButton.classList.remove('listening');
-                
-                // Prevent keyboard from showing on mobile
-                if (this.isMobile) {
-                    this.searchInput.blur();
-                }
-
-                // Ensure we start the countdown if we have text when manually stopping
-                if (this.searchInput.value.trim()) {
-                    this.startCountdown();
-                }
-            } catch (error) {
-                console.error('Error stopping recognition:', error);
-                // Reset state even if there's an error
-                this.isListening = false;
-                this.voiceButton.classList.remove('listening');
-                this.clearTimers();
-            }
-        }
-
-        handleStart() {
-            this.isListening = true;
-            this.voiceButton.classList.add('listening');
-            this.searchInput.placeholder = 'Duke dëgjuar...';
-            
-            // Clear any existing text when starting new recognition
-            if (this.isMobile) {
-                this.searchInput.value = '';
-                this.searchInput.blur();
-            }
-        }
-
-        handleEnd() {
-            this.isListening = false;
-            this.voiceButton.classList.remove('listening');
-            this.searchInput.placeholder = 'Search anything...';
-            
-            // If we have text in the input, start the countdown for search
-            if (this.searchInput.value.trim()) {
-                this.startCountdown();
-            } else if (!this.searchTimeout) {
-                // Only show no speech message if no text was captured and no timeout is pending
-                this.showFeedback('Nuk u dëgjua asnjë zë. Provoni përsëri.');
-            }
-        }
-
-        handleResult(event) {
-            const results = Array.from(event.results);
-            let finalTranscript = '';
-            let interimTranscript = '';
-
-            results.forEach(result => {
-                if (result.isFinal) {
-                    finalTranscript += result[0].transcript;
-                } else {
-                    interimTranscript += result[0].transcript;
-                }
-            });
-
-            // Update the search input with transcribed text
-            const transcribedText = finalTranscript || interimTranscript;
-            if (transcribedText) {
-                this.searchInput.value = transcribedText;
-                
-                // On iOS, we need to manually trigger the end if we have a final result
-                if (finalTranscript && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-                    this.stopListening();
-                    this.startCountdown();
-                }
-            }
-        }
-
-        handleError(event) {
-            this.isListening = false;
-            this.voiceButton.classList.remove('listening');
-            console.error('Speech recognition error:', event.error);
-
-            let message = '';
-            
-            switch (event.error) {
-                case 'no-speech':
-                    message = 'No speech detected. Please try speaking again.';
-                    break;
-                case 'audio-capture':
-                case 'not-allowed':
-                    message = this.isIOS ? 
-                        'Please allow microphone access in Settings > Safari > Microphone' :
-                        'Please allow microphone access to use voice commands';
-                    break;
-                case 'network':
-                    message = 'Network error. Please check your connection and try again.';
-                    break;
-                case 'aborted':
-                    message = 'Voice recognition was stopped. Tap the mic to try again.';
-                    break;
-                case 'language-not-supported':
-                    message = 'This language is not supported. Please try another browser.';
-                    break;
-                case 'service-not-allowed':
-                    message = this.isIOS ?
-                        'Please enable voice recognition in Settings > Safari > Microphone' :
-                        'Voice recognition service is not available. Please try again later.';
-                    break;
-                case 'start-error':
-                    message = this.isIOS ?
-                        'Please close and reopen Safari, then try again' :
-                        'Error starting voice recognition. Please refresh and try again.';
-                    break;
-                default:
-                    message = this.isIOS ?
-                        'Please check microphone permissions in Settings > Safari > Microphone' :
-                        'An unexpected error occurred. Please try again.';
-            }
-            
-            this.showFeedback(message);
-        }
-
-        handleNoMatch() {
-            this.showFeedback('Could not recognize speech. Please try again.');
-        }
-
-        showFeedback(message) {
-            // Remove any existing feedback first
-            const existingFeedback = document.querySelector('.voice-feedback');
-            if (existingFeedback) {
-                existingFeedback.remove();
-            }
-
-            // Create a new feedback element
-            const feedback = document.createElement('div');
-            feedback.className = 'voice-feedback';
-            if (this.isMobile) {
-                feedback.className += ' mobile';
-            }
-            feedback.textContent = message;
-            
-            // Position it near the search box
-            const searchContainer = document.querySelector('.search-container');
-            searchContainer.appendChild(feedback);
-            
-            // Only auto-remove feedback if it's not a countdown message
-            if (!message.includes('Kërkimi fillon për...')) {
-                setTimeout(() => {
-                    feedback.remove();
-                }, this.isMobile ? 2000 : 3000);
-            }
-        }
-    }
 }); 
