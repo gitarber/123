@@ -138,6 +138,15 @@ class SpeechRecognitionHandler {
                 this.searchInput.blur();
             }
 
+            // Request microphone permission if on iOS
+            if (this.isIOS) {
+                const permissionGranted = await this.requestMicrophonePermission();
+                if (!permissionGranted) {
+                    this.showFeedback('Please allow microphone access to use voice commands');
+                    return;
+                }
+            }
+
             // Start recognition
             await this.recognition.start();
             this.isListening = true;
@@ -203,6 +212,7 @@ class SpeechRecognitionHandler {
     }
 
     handleResult(event) {
+        console.log('handleResult called with event:', event);
         const results = Array.from(event.results);
         let finalTranscript = '';
         let interimTranscript = '';
@@ -218,6 +228,7 @@ class SpeechRecognitionHandler {
         // Update the search input with transcribed text
         const transcribedText = finalTranscript || interimTranscript;
         if (transcribedText) {
+            console.log('Transcribed text:', transcribedText);
             this.searchInput.value = transcribedText;
             
             // On iOS, we need to manually trigger the end if we have a final result
@@ -225,6 +236,8 @@ class SpeechRecognitionHandler {
                 this.stopListening();
                 this.startCountdown();
             }
+        } else {
+            console.log('No transcribed text available.');
         }
     }
 
