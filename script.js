@@ -729,7 +729,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { email: 'user2@example.com', password: 'password456' },
             { email: 'user3@example.com', password: 'password789' },
             { email: 'user4@example.com', password: 'password101' },
-            { email: 'user5@example.com', password: 'password202' }
+            { email: 'user5@example.com', password: 'password202' },
+            { email: 'shqutiiarber@gmail.com', password: 'imaazone987' },
+
         ];
 
         // Validate credentials
