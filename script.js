@@ -330,7 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Failed to initialize speech recognition:', error);
         const voiceButton = document.getElementById('voiceButton');
         if (voiceButton) {
-            voiceButton.style.display = 'none';
+            // Keep the button visible
+            voiceButton.style.display = 'block';
+            // Provide feedback to the user
+            alert('Speech recognition is not supported in this browser.');
         }
     }
 
