@@ -124,7 +124,7 @@
 }
 
 .video-description {
-    font-size: 1rem;
+    font-size: 1px;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.5rem;
     line-height: 1.5;
@@ -222,7 +222,7 @@
     }
 
     .video-description {
-        font-size: 0.9rem;
+        font-size: 0.2rem
     }
 
     .video-content {
@@ -232,6 +232,16 @@
     .page-title {
         font-size: 1.5rem;
         margin: 1.5rem 0;
+    }
+
+    .video-card {
+        max-width: 365px; /* Full width on mobile */
+    }
+}
+
+@media (min-width: 769px) {
+    .video-card {
+        max-width: 280px; /* Adjusted to a smaller width for desktop */
     }
 }
 
