@@ -68,7 +68,7 @@
     transition: all 0.3s ease;
     width: 100%;
     height: auto;
-    max-width: 385px;
+    max-width: 375px;
     aspect-ratio: 16/9;
     border: 2px solid rgba(27, 179, 129, 0.2);
     backdrop-filter: blur(10px);
