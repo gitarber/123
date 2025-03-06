@@ -28,7 +28,7 @@ class SpeechRecognitionHandler {
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'sq-AL'; // Test with 'en-US' if needed
+        this.recognition.lang = 'en-US'; // Changed to 'en-US' for broader support; revert to 'sq-AL' if confirmed working
         this.recognition.continuous = false;
         this.recognition.interimResults = true;
         this.recognition.maxAlternatives = 1;
@@ -46,12 +46,13 @@ class SpeechRecognitionHandler {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             if (!window.streamReference) {
                 window.streamReference = stream;
+                console.log('Microphone stream acquired');
             }
             return true;
         } catch (error) {
             console.error('Microphone permission error:', error.name, error.message);
             if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
-                this.showFeedback('Ju lutem lejoni aksesin në mikrofon për të përdorur komandat me zë');
+                this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone dhe rifreskoni faqen');
             }
             return false;
         }
@@ -106,12 +107,11 @@ class SpeechRecognitionHandler {
             }
         } catch (error) {
             console.error('Start listening error:', error.name, error.message);
-            this.handleError({ error: error.message || 'start-error' });
             this.isListening = false;
             this.voiceButton.classList.remove('listening');
-            if (this.isIOS && error.message.includes('NotAllowed')) {
-                this.showFeedback('Mikrofoni nuk u aktivizua. Ju lutem provoni përsëri ose kontrolloni lejet në Settings > Safari > Microphone');
-            }
+            this.showFeedback(this.isIOS ?
+                'Gabim në nisjen e zërit. Ju lutem rifreskoni faqen ose kontrolloni Settings > Safari > Microphone' :
+                'Gabim në nisjen e zërit. Ju lutem provoni përsëri.');
         }
     }
 
@@ -195,7 +195,7 @@ class SpeechRecognitionHandler {
             case 'audio-capture':
             case 'not-allowed':
                 message = this.isIOS ?
-                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone' :
+                    'Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone dhe rifreskoni faqen' :
                     'Ju lutem lejoni aksesin në mikrofon për të përdorur komandat me zë';
                 break;
             case 'network':
@@ -205,22 +205,17 @@ class SpeechRecognitionHandler {
                 message = 'Zëri u ndërpre. Prekni mikrofonin për të provuar përsëri.';
                 break;
             case 'language-not-supported':
-                message = 'Kjo gjuhë nuk mbështetet. Ju lutem provoni një shfletues tjetër.';
+                message = 'Kjo gjuhë nuk mbështetet. Provoni të ndryshoni gjuhën ose shfletuesin.';
                 break;
             case 'service-not-allowed':
                 message = this.isIOS ?
-                    'Ju lutem aktivizoni zërin në Settings > Safari > Microphone' :
-                    'Shërbimi i zërit nuk është i disponueshëm. Ju lutem provoni përsëri më vonë.';
-                break;
-            case 'start-error':
-                message = this.isIOS ?
-                    'Ju lutem mbyllni dhe rihapni Safari, pastaj provoni përsëri' :
-                    'Gabim në nisjen e zërit. Ju lutem rifreskoni faqen dhe provoni përsëri.';
+                    'Ju lutem aktivizoni zërin në Settings > Safari > Microphone dhe rifreskoni' :
+                    'Shërbimi i zërit nuk është i disponueshëm. Provoni përsëri më vonë.';
                 break;
             default:
                 message = this.isIOS ?
-                    'Ju lutem kontrolloni lejet e mikrofonit në Settings > Safari > Microphone' :
-                    'Ndodhi një gabim i papritur. Ju lutem provoni përsëri.';
+                    'Gabim i panjohur. Kontrolloni Settings > Safari > Microphone dhe rifreskoni' :
+                    'Ndodhi një gabim i papritur. Provoni përsëri.';
         }
         this.showFeedback(message);
     }
@@ -241,7 +236,9 @@ class SpeechRecognitionHandler {
         }
         feedback.textContent = message;
         const searchContainer = document.querySelector('.search-container');
-        searchContainer.appendChild(feedback);
+        if (searchContainer) {
+            searchContainer.appendChild(feedback);
+        }
         if (!message.includes('Kërkimi fillon për...')) {
             setTimeout(() => {
                 feedback.remove();
