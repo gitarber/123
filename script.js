@@ -78,26 +78,17 @@ class SpeechRecognitionHandler {
         try {
             console.log('Starting speech recognition...');
             this.clearTimers();
-            
             if (this.isMobile) {
                 this.searchInput.blur();
             }
-            
-            // For iOS, ensure we have permission first
-            if (this.isIOS) {
-                console.log('Requesting microphone permission for iOS...');
+            if (!window.streamReference) {
+                console.log('Requesting microphone permission...');
                 const permissionGranted = await this.requestMicrophonePermission();
+                console.log('Permission granted:', permissionGranted);
                 if (!permissionGranted) {
-                    this.showFeedback('Ju lutem lejoni aksesin në mikrofon në Settings > Safari > Microphone');
                     return;
                 }
             }
-            
-            // Add a small delay for iOS
-            if (this.isIOS) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
             console.log('Calling recognition.start()');
             await this.recognition.start();
             console.log('Recognition started successfully');
