@@ -28,7 +28,7 @@ class SpeechRecognitionHandler {
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'sq-AL'; // Albanian language support
+        this.recognition.lang = 'en-US'; // Changed from 'sq-AL' to 'en-US' for English voice input
         this.recognition.continuous = false;
         this.recognition.interimResults = true;
         this.recognition.maxAlternatives = 1;
