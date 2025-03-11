@@ -28,16 +28,29 @@ class SpeechRecognitionHandler {
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
-        this.recognition.lang = 'en-US'; // Changed from 'sq-AL' to 'en-US' for English voice input
+        
+        // Keep Albanian but add fallback handling
+        this.recognition.lang = 'sq-AL';
         this.recognition.continuous = false;
         this.recognition.interimResults = true;
-        this.recognition.maxAlternatives = 1;
+        this.recognition.maxAlternatives = 3; // Increased alternatives for better recognition
 
-        // Set up event handlers
+        // Set up event handlers with improved error handling
         this.recognition.onstart = this.handleStart.bind(this);
         this.recognition.onend = this.handleEnd.bind(this);
         this.recognition.onresult = this.handleResult.bind(this);
-        this.recognition.onerror = this.handleError.bind(this);
+        this.recognition.onerror = (event) => {
+            if (event.error === 'language-not-supported' && this.isIOS) {
+                // Try restarting with Albanian again
+                console.log('Retrying with Albanian language...');
+                if (this.isListening) {
+                    this.stopListening();
+                    setTimeout(() => this.startListening(), 100);
+                }
+            } else {
+                this.handleError(event);
+            }
+        };
         this.recognition.onnomatch = this.handleNoMatch.bind(this);
     }
 
