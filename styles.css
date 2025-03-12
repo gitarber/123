@@ -23,6 +23,27 @@ body {
     width: 100%;
     height: 100%;
     z-index: 0;
+    overflow: hidden;
+}
+
+#matrixCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+    z-index: 2;
+    pointer-events: none;
 }
 
 .floating-text {
@@ -79,17 +100,6 @@ body {
     background-clip: text;
     -webkit-text-stroke: 1px rgba(255,255,255,0.2);
     transform-origin: top right;
-}
-
-.gradient-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #000000, #111111);
-    opacity: 0.6;
-    animation: gradientAnimation 15s ease infinite;
 }
 
 .particles {
@@ -747,84 +757,6 @@ h1 {
         display: block;
         padding: 1.5rem;
         margin-top: auto;
-    }
-}
-
-.floating-row {
-    position: fixed;
-    font-size: clamp(2.5rem, 12vw, 12rem);
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.15);
-    white-space: nowrap;
-    z-index: 0;
-    user-select: none;
-    text-transform: uppercase;
-    font-family: 'Segoe UI', sans-serif;
-    letter-spacing: 0.1em;
-    background: linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-}
-
-.row1 {
-    top: 0%;
-    animation: floatLeft 20s linear infinite;
-}
-
-.row2 {
-    top: 16.6%;
-    animation: floatRight 20s linear infinite;
-}
-
-.row3 {
-    top: 33.2%;
-    animation: floatLeft 20s linear infinite;
-}
-
-.row4 {
-    top: 49.8%;
-    animation: floatRight 20s linear infinite;
-}
-
-.row5 {
-    top: 66.4%;
-    animation: floatLeft 20s linear infinite;
-}
-
-.row6 {
-    top: 83%;
-    animation: floatRight 17s linear infinite;
-}
-
-@keyframes floatLeft {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-@keyframes floatRight {
-    0% {
-        transform: translateX(100%);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-@media (max-width: 768px) {
-    .floating-row {
-        font-size: clamp(2rem, 8vw, 8rem);
-        letter-spacing: 0.05em;
-    }
-}
-
-@media (max-width: 480px) {
-    .floating-row {
-        font-size: clamp(1.5rem, 6vw, 6rem);
     }
 }
 

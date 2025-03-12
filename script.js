@@ -593,307 +593,182 @@ function displaySearchResults() {
     });
 }
 
-// DOMContentLoaded Event
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize menu
-    window.menuHandler = new MenuHandler();
-    
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-
-    if (!isLoggedIn) {
-        // Show login modal on page load
-        const loginModal = document.querySelector('.login-modal');
-        loginModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-    } else {
-        // If logged in, proceed to show the main content
-        // You can add logic here to show the main content
-    }
-
-    // Initialize search results if on search page
-    displaySearchResults();
-    
-    // Initialize chatbot
-    const initialMessage = document.querySelector('.message.bot .message-content');
-    if (initialMessage && window.AI_CONTEXT) {
-        initialMessage.textContent = AI_CONTEXT.commonPhrases.greeting;
-    }
-    
-    // Check for speech recognition support
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
-        const voiceButton = document.getElementById('voiceButton');
-        if (voiceButton) {
-            // Keep the button visible
-            voiceButton.style.display = 'block';
-            // Provide feedback to the user
-            const message = document.createElement('div');
-            message.className = 'error-message';
-            message.textContent = 'Speech recognition is not supported in this browser.';
-            voiceButton.parentNode.insertBefore(message, voiceButton.nextSibling);
-        }
-    } else {
-        // Initialize speech recognition
-        try {
-            window.speechHandler = new SpeechRecognitionHandler();
-            console.log('Speech recognition initialized successfully');
-        } catch (error) {
-            console.error('Failed to initialize speech recognition:', error);
-        }
-    }
-
-    // Login Modal Functionality
-    const loginButtons = document.querySelectorAll('.auth-btn.login'); // This will get both desktop and mobile buttons
-    const loginClose = document.querySelector('.login-close');
-    const loginForm = document.querySelector('.login-form');
-    const errorMessage = document.createElement('div'); // Create an error message element
-    errorMessage.className = 'error-message'; // Add a class for styling
-    loginForm.appendChild(errorMessage); // Append it to the form
-
-    // Open modal when clicking any login button
-    loginButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const loginModal = document.querySelector('.login-modal');
-            loginModal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            // Close the nav menu if it's open (mobile)
-            document.body.classList.remove('nav-active');
-            document.getElementById('email').focus(); // Focus on the email input
-        });
-    });
-
-    // Close modal when clicking close button
-    loginClose.addEventListener('click', () => {
-        const loginModal = document.querySelector('.login-modal');
-        loginModal.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
-        // Lock the website by showing the login modal again
-        loginModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-    });
-
-    // Handle login form submission
-    loginForm.addEventListener('submit', validateLogin);
-
-    function validateLogin(event) {
-        event.preventDefault(); // Prevent form submission
-
-        // Get the input values
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-
-        // Check if inputs exist
-        console.log('Email Input:', emailInput);
-        console.log('Password Input:', passwordInput);
-
-        if (!emailInput || !passwordInput) {
-            errorMessage.textContent = 'Login form is not properly initialized.';
-            return;
-        }
-
-        const email = emailInput.value;
-        const password = passwordInput.value;
-
-        // Form validation for email format
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
-            errorMessage.textContent = 'Please enter a valid email address.';
-            return;
-        }
-
-        // Default credentials
-        const credentials = [
-            { email: 'user1@example.com', password: 'password123' },
-            { email: 'user2@example.com', password: 'password456' },
-            { email: 'user3@example.com', password: 'password789' },
-            { email: 'user4@example.com', password: 'password101' },
-            { email: 'user5@example.com', password: 'password202' },
-            { email: 'shqutiiarber@gmail.com', password: 'imaazone987' },
-
+// Matrix Animation
+class MatrixAnimation {
+    constructor() {
+        this.canvas = document.getElementById('matrixCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        
+        // Albanian tax-related terms and numbers
+        this.terms = [
+            'TVSH', 'TAP', 'FITIM', 'TATIM', 'PAGA',
+            'SIGURIME', 'KONTRIBUTE', 'DEKLARIM', 
+            'EFILING', 'NIPTI', 'FATURA', 'BILANC',
+            'AKTIV', 'PASIV', 'ARKE', 'BANKE',
+            '20%', '15%', '13.5%', '21.6%', '3.4%',
+            'SHITJE', 'BLERJE', 'XHIRO', 'QARKULLIM'
         ];
-
-        // Validate credentials
-        const user = credentials.find(cred => cred.email === email && cred.password === password);
-        if (user) {
-            alert('Login successful!');
-            // Close the login modal
-            const loginModal = document.querySelector('.login-modal');
-            loginModal.classList.remove('active');
-            document.body.style.overflow = ''; // Restore scrolling
-
-            // Set user as logged in
-            localStorage.setItem('isLoggedIn', 'true');
-
-            // Redirect to the landing page or main content
-            window.location.href = 'index.html'; // Change this to your landing page URL
-        } else {
-            errorMessage.textContent = 'Invalid email or password. Please try again.';
-        }
+        
+        this.fontSize = 16;
+        this.streams = [];
+        this.frameCount = 0;
+        
+        this.messages = [
+            'TVSH APLIKOHET 20% PER MALLRAT',
+            'TATIMI MBI FITIMIN 15%',
+            'TATIMI MBI PAGEN 13.5%',
+            'SIGURIMET SHOQERORE 21.6%',
+            'SIGURIMET SHENDETESORE 3.4%',
+            'DEKLARIMI ONLINE NE E-FILING',
+            'AFATI I DEKLARIMIT DERI ME 14',
+            'TATIMI NE BURIM 15%'
+        ];
+        this.currentMessageIndex = 0;
+        
+        this.init();
+        this.animate();
     }
 
-    // Chatbot Widget Functionality
-    const chatbotWidget = document.querySelector('.chatbot-widget');
-    const chatbotButton = document.querySelector('.chatbot-button');
-    const chatInput = document.querySelector('#chatInput');
-    const sendButton = document.querySelector('.send-button');
-    const chatMessages = document.querySelector('.chat-messages');
-
-    // Google AI API Configuration
-    const API_KEY = 'AIzaSyA_S5Z4U9F37nRISRtcjOSGYfeCoZ0zZUg';
-    const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-
-    // AI Context and Rules
-    const AI_CONTEXT = {
-        role: "Ti je një ekspert ekonomik dhe këshilltar i specializuar në legjislacionin tatimor dhe kontabilitetin e biznesit në Shqipëri. Gjithmonë duhet të përgjigjesh në gjuhën shqipe. Ekspertiza jote përfshin:",
-        expertise: [
-            "Ligjet dhe rregulloret tatimore në Shqipëri",
-            "Standardet e kontabilitetit në Shqipëri (SKK)",
-            "Rregulloret dhe procedurat e TVSH-së",
-            "Tatimet e korporatave dhe biznesit të vogël",
-            "Dokumentacioni fiskal dhe faturat tatimore",
-            "Procedurat e regjistrimit të biznesit në QKB",
-            "Deklaratat financiare dhe raportimet",
-            "Kontributet e sigurimeve shoqërore dhe shëndetësore",
-            "Tatimet e punonjësve dhe listëpagesat",
-            "E-Albania dhe shërbimet elektronike tatimore",
-            "Procedurat doganore dhe import-eksporti",
-            "Legjislacioni i punës dhe kontratat",
-            "Taksat vendore dhe tarifat"
-        ],
-        rules: [
-            "Përgjigju gjithmonë në gjuhën shqipe",
-            "Jep informacion të saktë bazuar në legjislacionin aktual shqiptar",
-            "Shpjego konceptet e komplikuara në terma të thjeshtë",
-            "Përfshi referencat ligjore kur diskuton rregulloret (numrin e ligjit/VKM)",
-            "Jep shembuj praktikë për procedurat",
-            "Sqaro çdo paqartësi në rregulloret tatimore",
-            "Përmend afatet dhe datat e rëndësishme për deklarimet",
-            "Thekso gjobat dhe penalitetet për moszbatim",
-            "Sugjero praktikat më të mira për kontabilitetin",
-            "Jep udhëzime për dokumentacionin e nevojshëm",
-            "Rekomando procedurat e duhura për situata specifike",
-            "Përdor terminologjinë zyrtare shqiptare për termat financiarë",
-            "Referoju institucioneve përkatëse shqiptare (DPT, QKB, etj.)",
-            "Informo për ndryshimet e fundit në legjislacion"
-        ],
-        commonPhrases: {
-            greeting: "Përshëndetje! Unë jam këshilltari juaj për çështje ekonomike dhe tatimore. Si mund t'ju ndihmoj?",
-            understanding: "Ju kuptoj. Më lejoni t'ju shpjegoj...",
-            clarification: "Për të qenë më i qartë...",
-            example: "Për shembull...",
-            reference: "Sipas ligjit...",
-            deadline: "Kini parasysh që afati është...",
-            warning: "Është e rëndësishme të dini që...",
-            suggestion: "Ju sugjeroj që...",
-            closing: "Shpresoj t'ju kem ndihmuar. A keni ndonjë pyetje tjetër?"
-        }
-    };
-
-    // Toggle chatbot
-    chatbotButton.addEventListener('click', () => {
-        chatbotWidget.classList.toggle('active');
-        if (chatbotWidget.classList.contains('active')) {
-            chatInput.focus();
-        }
-    });
-
-    // Send message function
-    function sendMessage(message, isUser = true) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-        messageDiv.innerHTML = `
-            <div class="message-content">
-                ${message}
-            </div>
-        `;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // Function to get AI response
-    async function getAIResponse(message) {
-        try {
-            const response = await fetch(`${API_URL}?key=${API_KEY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `${AI_CONTEXT.role}
-
-Fushat e ekspertizës:
-${AI_CONTEXT.expertise.map(exp => "- " + exp).join('\n')}
-
-Rregullat për t'u ndjekur:
-${AI_CONTEXT.rules.map(rule => "- " + rule).join('\n')}
-
-Pyetja e përdoruesit: ${message}
-
-Ju lutem jepni një përgjigje profesionale në gjuhën shqipe, bazuar në kontekstin dhe rregullat e mësipërme. Përdorni frazat e zakonshme për të strukturuar përgjigjen tuaj.`
-                        }]
-                    }]
-                })
+    init() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        
+        // Initialize horizontal streams with more space between them
+        const rows = Math.floor(this.canvas.height / (this.fontSize * 1.5)); // Increased spacing
+        for (let i = 0; i < rows; i++) {
+            this.streams.push({
+                x: -Math.random() * 1000,
+                y: i * (this.fontSize * 1.5), // Increased spacing
+                speed: 0.5 + Math.random() * 1.5, // Slower speed for better readability
+                characters: [],
+                length: 5 + Math.floor(Math.random() * 10), // Shorter streams for better readability
+                brightness: 0.2 + Math.random() * 0.4,
+                lastCharUpdateTime: 0,
+                updateInterval: 500 + Math.random() * 1000 // Slower updates for better readability
             });
+        }
 
-            if (!response.ok) {
-                throw new Error('API request failed');
+        window.addEventListener('resize', () => this.onWindowResize());
+    }
+
+    drawText(message, y) {
+        const x = (this.canvas.width - (message.length * this.fontSize)) / 2;
+        this.ctx.fillStyle = '#00fdb1';
+        this.ctx.font = 'bold ' + this.fontSize + 'px monospace';
+        this.ctx.fillText(message, x, y);
+    }
+
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        // Slower fade for better readability
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.ctx.font = this.fontSize + 'px monospace';
+        const currentTime = Date.now();
+        
+        // Update and draw streams
+        this.streams.forEach(stream => {
+            if (stream.characters.length < stream.length) {
+                stream.characters.push({
+                    term: this.terms[Math.floor(Math.random() * this.terms.length)],
+                    brightness: stream.brightness,
+                    lastUpdate: currentTime
+                });
             }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        } catch (error) {
-            console.error('Error:', error);
-            return 'Më vjen keq, pata një problem teknik. Ju lutem provoni përsëri më vonë.';
+            
+            // Draw terms horizontally
+            stream.characters.forEach((char, index) => {
+                if (currentTime - char.lastUpdate > stream.updateInterval) {
+                    char.term = this.terms[Math.floor(Math.random() * this.terms.length)];
+                    char.lastUpdate = currentTime;
+                }
+                
+                const alpha = (index === stream.characters.length - 1) ? 1 : 
+                             (index === 0) ? 0.3 : 
+                             char.brightness;
+                
+                this.ctx.shadowColor = '#00fdb1';
+                this.ctx.shadowBlur = index === stream.characters.length - 1 ? 8 : 0;
+                this.ctx.fillStyle = `rgba(0, 253, 177, ${alpha})`;
+                
+                const xPos = stream.x + (index * (this.fontSize * 4)); // Increased spacing between terms
+                this.ctx.fillText(char.term, xPos, stream.y);
+                
+                this.ctx.shadowBlur = 0;
+            });
+            
+            stream.x += stream.speed;
+            
+            if (stream.x > this.canvas.width) {
+                stream.x = -(stream.length * this.fontSize * 4); // Adjusted for term length
+                stream.characters = [];
+                stream.speed = 0.5 + Math.random() * 1.5;
+            }
+        });
+        
+        this.frameCount++;
+        if (this.frameCount % 200 === 0) {
+            this.currentMessageIndex = (this.currentMessageIndex + 1) % this.messages.length;
         }
+        
+        this.ctx.shadowColor = '#00fdb1';
+        this.ctx.shadowBlur = 15;
+        this.drawText(this.messages[this.currentMessageIndex], this.canvas.height / 2);
+        this.ctx.shadowBlur = 0;
     }
 
-    // Show typing indicator
-    function showTypingIndicator() {
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message bot typing';
-        typingDiv.innerHTML = `
-            <div class="message-content">
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-                <span class="typing-dot"></span>
-            </div>
-        `;
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        return typingDiv;
+    onWindowResize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.streams = [];
+        this.init();
     }
+}
 
-    // Handle send button click
-    sendButton.addEventListener('click', async () => {
-        const message = chatInput.value.trim();
-        if (message) {
-            // Send user message
-            sendMessage(message);
-            chatInput.value = '';
-            
-            // Show typing indicator
-            const typingIndicator = showTypingIndicator();
-            
-            // Get and send AI response
-            const aiResponse = await getAIResponse(message);
-            typingIndicator.remove();
-            sendMessage(aiResponse, false);
-        }
-    });
+// Initialize matrix animation
+const matrixAnimation = new MatrixAnimation();
 
-    // Handle enter key
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendButton.click();
-        }
-    });
+// Menu functionality
+document.querySelector('.menu-button').addEventListener('click', function() {
+    document.body.classList.toggle('nav-active');
+});
 
-    // Close chatbot when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!chatbotWidget.contains(e.target)) {
-            chatbotWidget.classList.remove('active');
-        }
-    });
-}); 
+document.querySelector('.nav-overlay').addEventListener('click', function() {
+    document.body.classList.remove('nav-active');
+});
+
+// Login modal functionality
+const loginBtn = document.querySelector('.auth-btn.login');
+const loginModal = document.querySelector('.login-modal');
+const loginClose = document.querySelector('.login-close');
+
+loginBtn.addEventListener('click', () => {
+    loginModal.classList.add('active');
+});
+
+loginClose.addEventListener('click', () => {
+    loginModal.classList.remove('active');
+});
+
+loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+        loginModal.classList.remove('active');
+    }
+});
+
+// Chatbot functionality
+const chatbotWidget = document.querySelector('.chatbot-widget');
+const chatbotButton = document.querySelector('.chatbot-button');
+
+chatbotButton.addEventListener('click', () => {
+    chatbotWidget.classList.toggle('active');
+});
+
+// Voice button functionality
+const voiceButton = document.getElementById('voiceButton');
+
+voiceButton.addEventListener('click', function() {
+    this.classList.toggle('listening');
+});
