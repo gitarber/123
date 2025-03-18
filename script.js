@@ -594,141 +594,68 @@ function displaySearchResults() {
 }
 
 // Matrix Animation
-class MatrixAnimation {
+class MatrixRain {
     constructor() {
-        this.canvas = document.getElementById('matrixCanvas');
+        this.canvas = document.getElementById('matrixRain');
         this.ctx = this.canvas.getContext('2d');
-        
-        // Albanian tax-related terms and numbers
-        this.terms = [
-            'TVSH', 'TAP', 'FITIM', 'TATIM', 'PAGA',
-            'SIGURIME', 'KONTRIBUTE', 'DEKLARIM', 
-            'EFILING', 'NIPTI', 'FATURA', 'BILANC',
-            'AKTIV', 'PASIV', 'ARKE', 'BANKE',
-            '20%', '15%', '13.5%', '21.6%', '3.4%',
-            'SHITJE', 'BLERJE', 'XHIRO', 'QARKULLIM'
-        ];
-        
+        this.characters = 'ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ0123456789'.split('');
         this.fontSize = 16;
-        this.streams = [];
-        this.frameCount = 0;
-        
-        this.messages = [
-            'TVSH APLIKOHET 20% PER MALLRAT',
-            'TATIMI MBI FITIMIN 15%',
-            'TATIMI MBI PAGEN 13.5%',
-            'SIGURIMET SHOQERORE 21.6%',
-            'SIGURIMET SHENDETESORE 3.4%',
-            'DEKLARIMI ONLINE NE E-FILING',
-            'AFATI I DEKLARIMIT DERI ME 14',
-            'TATIMI NE BURIM 15%'
-        ];
-        this.currentMessageIndex = 0;
-        
+        this.columns = 0;
+        this.drops = [];
         this.init();
+        window.addEventListener('resize', () => this.init());
         this.animate();
     }
 
     init() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        
-        // Initialize horizontal streams with more space between them
-        const rows = Math.floor(this.canvas.height / (this.fontSize * 1.5)); // Increased spacing
-        for (let i = 0; i < rows; i++) {
-            this.streams.push({
-                x: -Math.random() * 1000,
-                y: i * (this.fontSize * 1.5), // Increased spacing
-                speed: 0.5 + Math.random() * 1.5, // Slower speed for better readability
-                characters: [],
-                length: 5 + Math.floor(Math.random() * 10), // Shorter streams for better readability
-                brightness: 0.2 + Math.random() * 0.4,
-                lastCharUpdateTime: 0,
-                updateInterval: 500 + Math.random() * 1000 // Slower updates for better readability
-            });
+        this.columns = Math.floor(this.canvas.width / this.fontSize);
+        this.drops = [];
+        for (let i = 0; i < this.columns; i++) {
+            this.drops[i] = Math.random() * -100;
         }
-
-        window.addEventListener('resize', () => this.onWindowResize());
     }
 
-    drawText(message, y) {
-        const x = (this.canvas.width - (message.length * this.fontSize)) / 2;
-        this.ctx.fillStyle = '#00fdb1';
-        this.ctx.font = 'bold ' + this.fontSize + 'px monospace';
-        this.ctx.fillText(message, x, y);
+    draw() {
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.ctx.fillStyle = '#0F0';
+        this.ctx.font = this.fontSize + 'px monospace';
+
+        for (let i = 0; i < this.drops.length; i++) {
+            const text = this.characters[Math.floor(Math.random() * this.characters.length)];
+            const x = i * this.fontSize;
+            const y = this.drops[i] * this.fontSize;
+
+            // Add white color for first character in each column
+            if (Math.random() > 0.975) {
+                this.ctx.fillStyle = '#FFF';
+            } else {
+                this.ctx.fillStyle = '#0F0';
+            }
+
+            this.ctx.fillText(text, x, y);
+
+            if (y > this.canvas.height && Math.random() > 0.975) {
+                this.drops[i] = 0;
+            }
+
+            this.drops[i]++;
+        }
     }
 
     animate() {
+        this.draw();
         requestAnimationFrame(() => this.animate());
-        
-        // Slower fade for better readability
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        this.ctx.font = this.fontSize + 'px monospace';
-        const currentTime = Date.now();
-        
-        // Update and draw streams
-        this.streams.forEach(stream => {
-            if (stream.characters.length < stream.length) {
-                stream.characters.push({
-                    term: this.terms[Math.floor(Math.random() * this.terms.length)],
-                    brightness: stream.brightness,
-                    lastUpdate: currentTime
-                });
-            }
-            
-            // Draw terms horizontally
-            stream.characters.forEach((char, index) => {
-                if (currentTime - char.lastUpdate > stream.updateInterval) {
-                    char.term = this.terms[Math.floor(Math.random() * this.terms.length)];
-                    char.lastUpdate = currentTime;
-                }
-                
-                const alpha = (index === stream.characters.length - 1) ? 1 : 
-                             (index === 0) ? 0.3 : 
-                             char.brightness;
-                
-                this.ctx.shadowColor = '#00fdb1';
-                this.ctx.shadowBlur = index === stream.characters.length - 1 ? 8 : 0;
-                this.ctx.fillStyle = `rgba(0, 253, 177, ${alpha})`;
-                
-                const xPos = stream.x + (index * (this.fontSize * 4)); // Increased spacing between terms
-                this.ctx.fillText(char.term, xPos, stream.y);
-                
-                this.ctx.shadowBlur = 0;
-            });
-            
-            stream.x += stream.speed;
-            
-            if (stream.x > this.canvas.width) {
-                stream.x = -(stream.length * this.fontSize * 4); // Adjusted for term length
-                stream.characters = [];
-                stream.speed = 0.5 + Math.random() * 1.5;
-            }
-        });
-        
-        this.frameCount++;
-        if (this.frameCount % 200 === 0) {
-            this.currentMessageIndex = (this.currentMessageIndex + 1) % this.messages.length;
-        }
-        
-        this.ctx.shadowColor = '#00fdb1';
-        this.ctx.shadowBlur = 15;
-        this.drawText(this.messages[this.currentMessageIndex], this.canvas.height / 2);
-        this.ctx.shadowBlur = 0;
-    }
-
-    onWindowResize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.streams = [];
-        this.init();
     }
 }
 
-// Initialize matrix animation
-const matrixAnimation = new MatrixAnimation();
+// Initialize the matrix rain effect
+document.addEventListener('DOMContentLoaded', () => {
+    new MatrixRain();
+});
 
 // Menu functionality
 document.querySelector('.menu-button').addEventListener('click', function() {
