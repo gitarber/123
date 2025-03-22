@@ -6,6 +6,7 @@
     <title>Search Results - Edustation</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="tutorials/e-albania.css">
+    <link rel="stylesheet" href="search-results.css">
 </head>
 <body>
     <div class="menu-button">
@@ -23,7 +24,7 @@
             <button class="auth-btn signup">Sign Up</button>
         </div>
         <div class="nav-links">
-            <a href="index.html" class="nav-link active">Kreu</a>
+            <a href="index.html" class="nav-link">Kreu</a>
             <a href="tutorials.html" class="nav-link">Tutoriale</a>
             <a href="q_and_a.html" class="nav-link">Pyetje & Pergjigje</a>
             <a href="template.html" class="nav-link">Template</a>
@@ -38,13 +39,13 @@
         <div class="particles"></div>
     </div>
     
-    <main class="videos-content">
+    <main class="search-content">
         <h1 class="page-title">Rezultatet e kërkimit</h1>
         <div class="search-info">
             <p>Duke kërkuar për: "<span id="searchQuery"></span>"</p>
             <p id="resultsCount"></p>
         </div>
-        <div class="videos-grid" id="searchResults">
+        <div class="search-results-grid" id="searchResults">
             <!-- Results will be populated dynamically -->
         </div>
     </main>
