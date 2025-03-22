@@ -1817,7 +1817,81 @@ class ContentIndexer {
         this.contentIndex = {
             videos: videoData,
             templates: templateData,
-            qa: qaData
+            qa: qaData,
+            // Add more content types
+            pages: [
+                {
+                    id: 'home',
+                    title: 'Kreu',
+                    description: 'Faqja kryesore e Edustation',
+                    url: 'index.html',
+                    type: 'page',
+                    category: 'main'
+                },
+                {
+                    id: 'tutorials',
+                    title: 'Tutoriale',
+                    description: 'Tutoriale dhe udhëzues për përdorimin e platformave të ndryshme',
+                    url: 'tutorials.html',
+                    type: 'page',
+                    category: 'main'
+                },
+                {
+                    id: 'qa',
+                    title: 'Pyetje & Pergjigje',
+                    description: 'Pyetje dhe përgjigje të shpeshta për tema të ndryshme',
+                    url: 'q_and_a.html',
+                    type: 'page',
+                    category: 'main'
+                },
+                {
+                    id: 'template',
+                    title: 'Template',
+                    description: 'Template të gatshme për bizneset',
+                    url: 'template.html',
+                    type: 'page',
+                    category: 'main'
+                },
+                {
+                    id: 'bilanci',
+                    title: 'Bilanci',
+                    description: 'Informacion dhe udhëzime për bilancin',
+                    url: 'bilanci.html',
+                    type: 'page',
+                    category: 'main'
+                },
+                {
+                    id: 'trajnime',
+                    title: 'Trajnime',
+                    description: 'Trajnime dhe kurse të ndryshme',
+                    url: 'trajnime.html',
+                    type: 'page',
+                    category: 'main'
+                }
+            ],
+            categories: [
+                {
+                    id: 'e-albania',
+                    title: 'E-Albania',
+                    description: 'Të gjitha shërbimet dhe udhëzimet për e-Albania',
+                    type: 'category',
+                    subcategories: ['aplikime', 'sherbime', 'dokumente']
+                },
+                {
+                    id: 'tatime',
+                    title: 'Tatime',
+                    description: 'Informacione për tatimet dhe deklaratat tatimore',
+                    type: 'category',
+                    subcategories: ['tvsh', 'tatim-fitimi', 'sigurime']
+                },
+                {
+                    id: 'biznese',
+                    title: 'Biznese',
+                    description: 'Informacione për menaxhimin e biznesit',
+                    type: 'category',
+                    subcategories: ['regjistrim', 'deklarime', 'raporte']
+                }
+            ]
         };
         this.initialize();
     }
@@ -1881,63 +1955,173 @@ class ContentIndexer {
         }
     }
 
+    // Calculate similarity between two strings
+    calculateSimilarity(str1, str2) {
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+        
+        if (str1 === str2) return 1.0;
+        if (str1.includes(str2) || str2.includes(str1)) return 0.8;
+        
+        const words1 = str1.split(/\s+/);
+        const words2 = str2.split(/\s+/);
+        
+        let matches = 0;
+        words1.forEach(word1 => {
+            words2.forEach(word2 => {
+                if (this.levenshteinDistance(word1, word2) <= 2) {
+                    matches++;
+                }
+            });
+        });
+        
+        return matches / Math.max(words1.length, words2.length);
+    }
+
+    // Calculate Levenshtein distance between two strings
+    levenshteinDistance(str1, str2) {
+        const m = str1.length;
+        const n = str2.length;
+        const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
+
+        for (let i = 0; i <= m; i++) dp[i][0] = i;
+        for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                if (str1[i - 1] === str2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(
+                        dp[i - 1][j - 1] + 1,
+                        dp[i - 1][j] + 1,
+                        dp[i][j - 1] + 1
+                    );
+                }
+            }
+        }
+
+        return dp[m][n];
+    }
+
+    // Get related terms for a given word
+    getRelatedTerms(word) {
+        const relatedTerms = {
+            'albania': ['e-albania', 'ealbania', 'sherbime', 'portal', 'qeveritar'],
+            'e': ['elektronik', 'electronic', 'online', 'digital', 'virtual'],
+            'si': ['how', 'tutorial', 'guide', 'udhëzues', 'mënyrë', 'si duhet'],
+            'aplikim': ['application', 'apply', 'submit', 'register', 'regjistrim', 'dërgoj'],
+            'deklarim': ['declare', 'submit', 'report', 'file', 'raportim', 'dorëzim'],
+            'biznes': ['business', 'company', 'firm', 'enterprise', 'kompani', 'ndërmarrje'],
+            'tatim': ['tax', 'fiscal', 'payment', 'duty', 'taksë', 'pagesë'],
+            'dokument': ['document', 'form', 'paper', 'file', 'formular', 'letër'],
+            'punonjes': ['employee', 'worker', 'staff', 'personnel', 'punëtor', 'personel'],
+            'pagese': ['payment', 'pay', 'fee', 'charge', 'pagesë', 'tarifë'],
+            'adrese': ['address', 'location', 'place', 'vendndodhje', 'vend'],
+            'fature': ['invoice', 'bill', 'receipt', 'faturë', 'kupon'],
+            'certifikate': ['certificate', 'document', 'proof', 'vërtetim', 'dokument'],
+            'regjistrim': ['registration', 'enroll', 'sign up', 'regjistrimi', 'abonim'],
+            'ndryshim': ['change', 'modify', 'update', 'modifikim', 'përditësim'],
+            'detyrim': ['obligation', 'duty', 'debt', 'borxh', 'pagesë'],
+            'sigurime': ['insurance', 'security', 'coverage', 'mbulim', 'mbrojtje'],
+            'sherbim': ['service', 'help', 'assistance', 'support', 'ndihmë'],
+            'portal': ['website', 'platform', 'site', 'web', 'online']
+        };
+
+        const wordLower = word.toLowerCase();
+        let related = new Set([wordLower]);
+
+        // Add exact matches from the related terms
+        Object.entries(relatedTerms).forEach(([key, values]) => {
+            if (key === wordLower || values.includes(wordLower) || 
+                key.includes(wordLower) || wordLower.includes(key)) {
+                related.add(key);
+                values.forEach(v => related.add(v));
+            }
+        });
+
+        // Add similar terms based on Levenshtein distance
+        Object.entries(relatedTerms).forEach(([key, values]) => {
+            if (this.levenshteinDistance(key, wordLower) <= 2) {
+                related.add(key);
+                values.forEach(v => related.add(v));
+            }
+        });
+
+        return Array.from(related);
+    }
+
     search(query) {
-        const searchTerm = query.toLowerCase();
-        const keywords = searchTerm.split(/\s+/).filter(word => word.length > 2);
+        // Normalize the search query
+        const searchTerm = query.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            return [];
+        }
+
         let allResults = [];
 
         // Search through all content types
         Object.entries(this.contentIndex).forEach(([contentType, items]) => {
-            const results = items.map(item => {
-                let score = 0;
-                const searchableText = `${item.title} ${item.description} ${item.category}`.toLowerCase();
+            const results = items.filter(item => {
+                const titleLower = item.title?.toLowerCase() || '';
+                const descriptionLower = item.description?.toLowerCase() || '';
+                const categoryLower = item.category?.toLowerCase() || '';
+                const subcategories = item.subcategories?.map(sub => sub.toLowerCase()) || [];
+                const answer = item.answer?.toLowerCase() || '';
                 
-                // Check for exact matches
-                if (searchableText.includes(searchTerm)) {
-                    score += 10;
-                }
-
-                // Check for keyword matches
-                keywords.forEach(keyword => {
-                    if (item.title.toLowerCase().includes(keyword)) {
-                        score += 5;
-                    }
-                    if (item.description.toLowerCase().includes(keyword)) {
-                        score += 3;
-                    }
-                    if (item.category.toLowerCase().includes(keyword)) {
-                        score += 2;
-                    }
-                    if (item.keywords?.includes(keyword)) {
-                        score += 4;
-                    }
-                });
-
-                // Add common search terms and their related topics
-                const relatedTerms = {
-                    'si': ['how', 'tutorial', 'guide', 'udhëzues'],
-                    'aplikim': ['application', 'apply', 'submit', 'register'],
-                    'deklarim': ['declare', 'submit', 'report', 'file'],
-                    'biznes': ['business', 'company', 'firm', 'enterprise'],
-                    'tatim': ['tax', 'fiscal', 'payment', 'duty'],
-                    'dokument': ['document', 'form', 'paper', 'file']
-                };
-
-                Object.entries(relatedTerms).forEach(([term, related]) => {
-                    if (searchTerm.includes(term) || related.some(r => searchTerm.includes(r))) {
-                        if (searchableText.includes(term)) {
-                            score += 2;
-                        }
-                    }
-                });
-
-                return { ...item, score, contentType };
-            }).filter(result => result.score > 0);
+                // Search in all text fields
+                return titleLower.includes(searchTerm) || 
+                       descriptionLower.includes(searchTerm) ||
+                       categoryLower.includes(searchTerm) ||
+                       subcategories.some(sub => sub.includes(searchTerm)) ||
+                       answer.includes(searchTerm);
+            }).map(item => ({
+                ...item,
+                score: 100, // All matches get same score since we're doing basic matching
+                contentType
+            }));
 
             allResults = [...allResults, ...results];
         });
 
-        return allResults.sort((a, b) => b.score - a.score);
+        // Add dynamic content from the page
+        const dynamicContent = this.getDynamicContent();
+        const dynamicResults = dynamicContent.filter(item => {
+            const textLower = item.text.toLowerCase();
+            return textLower.includes(searchTerm);
+        }).map(item => ({
+            ...item,
+            score: 100,
+            contentType: 'dynamic'
+        }));
+
+        allResults = [...allResults, ...dynamicResults];
+
+        return allResults;
+    }
+
+    getDynamicContent() {
+        // Get all text content from the current page
+        const content = [];
+        const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, .content');
+        
+        textElements.forEach(element => {
+            const text = element.textContent.trim();
+            if (text) {
+                content.push({
+                    id: `dynamic-${content.length}`,
+                    title: element.tagName === 'P' ? text.substring(0, 50) + '...' : text,
+                    description: text,
+                    text: text,
+                    type: 'content',
+                    category: 'dynamic',
+                    url: window.location.pathname + '#' + (element.id || '')
+                });
+            }
+        });
+
+        return content;
     }
 }
 
@@ -2006,12 +2190,12 @@ function displaySearchResults() {
     } catch (error) {
         console.error('Error parsing search results:', error);
     }
-
+    
     if (!searchTerm) {
         window.location.href = 'index.html';
         return;
     }
-
+    
     const searchQueryElement = document.getElementById('searchQuery');
     if (searchQueryElement) {
         searchQueryElement.textContent = searchTerm;
@@ -2021,37 +2205,24 @@ function displaySearchResults() {
     if (countElement) {
         if (results.length > 0) {
             countElement.textContent = `${results.length} rezultate u gjetën`;
-            countElement.style.color = 'rgba(255, 255, 255, 0.8)';
         } else {
-            countElement.innerHTML = `
-                Nuk u gjetën rezultate për "${searchTerm}".<br>
-                Ju sugjerojmë të shikoni përmbajtjen tonë më të fundit:
-            `;
-            countElement.style.color = '#00fdb1';
-            results = videoData.slice(0, 6);
+            countElement.textContent = `0 asnje resultat u gjet`;
         }
     }
 
     searchResults.innerHTML = '';
 
+    // Display all results without grouping
     results.forEach(result => {
         const resultCard = document.createElement('div');
         resultCard.className = 'result-card';
-        resultCard.setAttribute('data-type', result.type || 'video');
+        resultCard.setAttribute('data-type', result.type || 'content');
         
         let cardContent = '';
         if (result.thumbnail) {
             cardContent = `
                 <div class="video-thumbnail">
                     <img src="${result.thumbnail}" alt="${result.title}">
-                </div>`;
-        } else if (result.type === 'tutorial') {
-            cardContent = `
-                <div class="tutorial-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
                 </div>`;
         } else {
             cardContent = `
@@ -2072,8 +2243,8 @@ function displaySearchResults() {
                 <h3>${result.title}</h3>
                 <p class="result-description">${result.description}</p>
                 <div class="result-meta">
-                    <span class="result-type">${result.type || 'video'}</span>
-                    <span class="result-category">${result.category}</span>
+                    <span class="result-type">${result.type || 'page'}</span>
+                    ${result.category ? `<span class="result-category">${result.category}</span>` : ''}
                 </div>
                 ${result.type === 'qa' ? `
                     <div class="qa-answer" style="display: none;">
@@ -2085,50 +2256,30 @@ function displaySearchResults() {
                     </div>
                 ` : ''}
             </div>
-            ${result.score > 0 ? `<div class="relevance-score">Përputhshmëria: ${Math.min(100, Math.round(result.score * 10))}%</div>` : ''}
         `;
-
+        
         resultCard.addEventListener('click', () => {
             if (result.type === 'video' || !result.type) {
                 const modal = document.querySelector('.video-modal');
-                const player = document.querySelector('.youtube-player');
-                player.src = `https://www.youtube.com/embed/${result.id}?autoplay=1`;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                if (modal) {
+                    const player = modal.querySelector('.youtube-player');
+                    player.src = `https://www.youtube.com/embed/${result.id}?autoplay=1`;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
             } else if (result.type === 'qa') {
                 const qaAnswer = resultCard.querySelector('.qa-answer');
-                const description = resultCard.querySelector('.result-description');
-                
-                // Toggle answer visibility
-                if (qaAnswer.style.display === 'none') {
-                    qaAnswer.style.display = 'block';
-                    description.style.display = 'none';
-                    resultCard.classList.add('expanded');
-                } else {
-                    qaAnswer.style.display = 'none';
-                    description.style.display = 'block';
-                    resultCard.classList.remove('expanded');
+                if (qaAnswer) {
+                    qaAnswer.style.display = qaAnswer.style.display === 'none' ? 'block' : 'none';
+                    resultCard.classList.toggle('expanded');
                 }
-            } else {
+            } else if (result.url) {
                 window.location.href = result.url;
             }
         });
-
+        
         searchResults.appendChild(resultCard);
     });
-    
-    const modal = document.querySelector('.video-modal');
-    const modalClose = document.querySelector('.modal-close');
-    if (modal && modalClose) {
-        modalClose.addEventListener('click', () => {
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-            const player = document.querySelector('.youtube-player');
-            if (player) {
-                player.src = '';
-            }
-        });
-    }
 }
 
 // Initialize search results if on search page
