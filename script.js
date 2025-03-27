@@ -366,7 +366,7 @@ class MenuHandler {
 
 // Video Data
 const videoData = [
-    // e-albania videos (37 videos)
+    // e-albania videos (42 videos)
     {
         id: '60jZKH9q_RA',
         title: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
@@ -461,7 +461,47 @@ const videoData = [
         description: 'Si të shkarkojmë vërtetim për pagesën e sigurimeve shoqërore sipas biznesit ?',
         thumbnail: 'thumbnails/e-albania/37.png',
         category: 'e-albania',
-        keywords: ['vërtetim', 'sigurime', 'shoqërore', 'biznes']
+        keywords: ['vërtetim', 'sigurime', 'shoqërore', 'biznesit', 'e-albania']
+    },
+    {
+        id: 'ILeDQukVbOE',
+        title: 'Si të bëj ndryshimin e adresës së biznesit nëpërmjet e-albania ?',
+        description: 'Si të bëj ndryshimin e adresës së biznesit nëpërmjet e-albania ?',
+        thumbnail: 'thumbnails/e-albania/38.png',
+        category: 'e-albania',
+        keywords: ['ndryshimi', 'adresës', 'biznesit', 'e-albania']
+    },
+    {
+        id: 'Z6KYcMrvZaI',
+        title: 'Si dorëzohen automatikisht librat e shitjes dhe blerjes ?',
+        description: 'Si dorëzohen automatikisht librat e shitjes dhe blerjes ?',
+        thumbnail: 'thumbnails/e-albania/39.png',
+        category: 'e-albania',
+        keywords: ['librat', 'shitjes', 'blerjes', 'automatikisht', 'e-albania']
+    },
+    {
+        id: 'nyEHZ9IYcf0',
+        title: 'Si të shtojmë përgjegjësinë tatimore Tatim i Mbajtur në Burim për qeranë ?',
+        description: 'Si të shtojmë përgjegjësinë tatimore Tatim i Mbajtur në Burim për qeranë ?',
+        thumbnail: 'thumbnails/e-albania/40.png',
+        category: 'e-albania',
+        keywords: ['përgjegjësi', 'tatimore', 'tatim', 'burim', 'qera', 'e-albania']
+    },
+    {
+        id: '2wf8B3hUrHM',
+        title: 'Si të shkarkojmë vërtetim që nuk kemi detyrime si biznes ?',
+        description: 'Si të shkarkojmë vërtetim që nuk kemi detyrime si biznes ?',
+        thumbnail: 'thumbnails/e-albania/41.png',
+        category: 'e-albania',
+        keywords: ['vërtetim', 'detyrime', 'biznes', 'e-albania']
+    },
+    {
+        id: '-SDD69Ih4Nc',
+        title: 'Si të shkarkojmë certifikatën familjare ?',
+        description: 'Si të shkarkojmë certifikatën familjare ?',
+        thumbnail: 'thumbnails/e-albania/42.png',
+        category: 'e-albania',
+        keywords: ['certifikata', 'familjare', 'e-albania']
     },
     {
         id: 'FJRa-8wYtXE',
@@ -592,7 +632,7 @@ const videoData = [
         keywords: ['vërtetim', 'xhiro', 'vite']
     },
 
-    // Excel videos (5 videos)
+    // Excel videos (8 videos)
     {
         id: '23zxaMGpYms',
         title: 'Seksioni Autofill, Flash Fill, Checkboxes, Drop down',
@@ -632,6 +672,30 @@ const videoData = [
         thumbnail: 'thumbnails/excel/5.png',
         category: 'excel',
         keywords: ['excel', 'view', 'panel']
+    },
+    {
+        id: 'Xd_Ksqes-hw',
+        title: 'Seksioni Worksheet and Workbook ne Excel',
+        description: 'Si të përdorim Worksheet dhe Workbook në Excel',
+        thumbnail: 'thumbnails/excel/6.png',
+        category: 'excel',
+        keywords: ['excel', 'worksheet', 'workbook', 'panel']
+    },
+    {
+        id: 'wIedHxe4It0',
+        title: 'Seksioni Page Layout Panel ne Excel',
+        description: 'Si të përdorim Page Layout Panel në Excel',
+        thumbnail: 'thumbnails/excel/7.png',
+        category: 'excel',
+        keywords: ['excel', 'page layout', 'panel']
+    },
+    {
+        id: 'OhLRhHSyyqg',
+        title: 'Seksioni Formulas Panel ne Excel',
+        description: 'Si të përdorim Formulas Panel në Excel',
+        thumbnail: 'thumbnails/excel/8.png',
+        category: 'excel',
+        keywords: ['excel', 'formulas', 'panel']
     },
 
     // Bilanci videos (expanding the collection)
@@ -676,40 +740,224 @@ const videoData = [
         keywords: ['bilanc', 'kontroll', 'dorëzim', 'final']
     },
 
-    // Selfcare videos (15 videos)
+    // Selfcare videos (8 videos)
     {
-        id: 'swiJ7_cCUVs',
-        title: 'Ndryshimi i kategorisë së biznesit në selfcare',
-        description: 'Si të ndryshojmë kategorinë e biznesit për të bërë fatura falas nga selfcare',
+        id: '8WSPN5-lynw',
+        title: 'Si të kontrolloj xhiron mujore të biznesit në cdo moment në selfcare ?',
+        description: 'Si të kontrolloj xhiron mujore të biznesit në cdo moment në selfcare ?',
         thumbnail: 'thumbnails/selfcare/1.png',
         category: 'selfcare',
-        keywords: ['selfcare', 'kategori', 'biznes', 'fatura']
+        keywords: ['xhiro', 'mujore', 'biznes', 'selfcare']
     },
     {
-        id: 'hFg2NT2Wg3I',
-        title: 'Kategoritë e punësimit në selfcare',
-        description: 'Si të menaxhojmë kategoritë e punësimit në selfcare',
+        id: '9qEbbA0KHvs',
+        title: 'Si të kontrolloj transaksionet mujore të biznesit në selfcare ?',
+        description: 'Si të kontrolloj transaksionet mujore të biznesit në selfcare ?',
         thumbnail: 'thumbnails/selfcare/2.png',
         category: 'selfcare',
-        keywords: ['selfcare', 'punësim', 'kategori']
+        keywords: ['transaksione', 'mujore', 'biznes', 'selfcare']
+    },
+    {
+        id: 'NA_jdrF9SIk',
+        title: 'Si të verifikoj fiskalizimin e deklaratës doganore në selfcare ?',
+        description: 'Si të verifikoj fiskalizimin e deklaratës doganore në selfcare ?',
+        thumbnail: 'thumbnails/selfcare/3.png',
+        category: 'selfcare',
+        keywords: ['fiskalizim', 'deklaratë', 'doganore', 'selfcare']
+    },
+    {
+        id: 'rW9zlAc_xhw',
+        title: 'Si të kontrolloj transaksionet e shitjeve dhe blerjeve në selfcare .',
+        description: 'Si të kontrolloj transaksionet e shitjeve dhe blerjeve në selfcare .',
+        thumbnail: 'thumbnails/selfcare/4.png',
+        category: 'selfcare',
+        keywords: ['transaksione', 'shitje', 'blerje', 'selfcare']
+    },
+    {
+        id: 'mJJW1ER81HI',
+        title: 'Shtimi i artikujve në selfcare për të bërë fatura falas.',
+        description: 'Shtimi i artikujve në selfcare për të bërë fatura falas.',
+        thumbnail: 'thumbnails/selfcare/5.png',
+        category: 'selfcare',
+        keywords: ['artikuj', 'fatura', 'falas', 'selfcare']
+    },
+    {
+        id: '9_iCgvMKEGc',
+        title: 'Sa afat kemi për deklarimin e importit në sistemin selfcare ?',
+        description: 'Sa afat kemi për deklarimin e importit në sistemin selfcare ?',
+        thumbnail: 'thumbnails/selfcare/6.png',
+        category: 'selfcare',
+        keywords: ['afat', 'deklarim', 'import', 'selfcare']
+    },
+    {
+        id: 'tov66HeqwUY',
+        title: 'Aplikimi dhe ngarkimi i certifikates elektronike',
+        description: 'Aplikimi dhe ngarkimi i certifikates elektronike',
+        thumbnail: 'thumbnails/selfcare/7.png',
+        category: 'selfcare',
+        keywords: ['certifikatë', 'elektronike', 'aplikim', 'selfcare']
+    },
+    {
+        id: 'jl8-zHSF3NI',
+        title: 'Si regjistrohet deklarata doganore në sistem ?',
+        description: 'Si regjistrohet deklarata doganore në sistem ?',
+        thumbnail: 'thumbnails/selfcare/8.png',
+        category: 'selfcare',
+        keywords: ['deklaratë', 'doganore', 'regjistrim', 'selfcare']
     },
 
     // E-filling videos (25 videos)
     {
+        id: '5g9jFmfpnUA',
+        title: 'Si plotësohet deklarata e të ardhurave personale DIVA në sistemin e tatimeve ?',
+        description: 'Si plotësohet deklarata e të ardhurave personale DIVA në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/1.png',
+        category: 'e-filling',
+        keywords: ['deklarata', 'DIVA', 'tatime', 'të ardhura']
+    },
+    {
+        id: 'CIJrga65fsY',
+        title: 'Si të regjistroj llogarinë bankare të biznesit në sistemin e tatimeve ?',
+        description: 'Si të regjistroj llogarinë bankare të biznesit në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/2.png',
+        category: 'e-filling',
+        keywords: ['llogari', 'bankare', 'biznes', 'tatime']
+    },
+    {
+        id: 'w0owmUr_au4',
+        title: 'Si të ndryshoj numrin e cel dhe adresën e e mail në sistemin e tatimeve ?',
+        description: 'Si të ndryshoj numrin e cel dhe adresën e e mail në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/3.png',
+        category: 'e-filling',
+        keywords: ['numër', 'celular', 'email', 'tatime']
+    },
+    {
+        id: '1pZ9HeiFmqY',
+        title: 'Si plotësohet deklarata e tatimit të thjeshtuar mbi fitimin në sistemin e tatimeve ?',
+        description: 'Si plotësohet deklarata e tatimit të thjeshtuar mbi fitimin në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/4.png',
+        category: 'e-filling',
+        keywords: ['tatim', 'thjeshtuar', 'fitim', 'tatime']
+    },
+    {
+        id: 'IBnm4KFV1kE',
+        title: 'Si bëhet deklarimi me 0 i sigurimeve shoqërore ?',
+        description: 'Si bëhet deklarimi me 0 i sigurimeve shoqërore ?',
+        thumbnail: 'thumbnails/e-filling/5.png',
+        category: 'e-filling',
+        keywords: ['sigurime', 'shoqërore', 'deklarim']
+    },
+    {
+        id: 'i3WjU85X_eM',
+        title: 'Si bëhet regjistrimi me vonesë i punonjësve në sistem ?',
+        description: 'Si bëhet regjistrimi me vonesë i punonjësve në sistem ?',
+        thumbnail: 'thumbnails/e-filling/6.png',
+        category: 'e-filling',
+        keywords: ['regjistrim', 'vonesë', 'punonjës']
+    },
+    {
+        id: 'u79_THF3WoQ',
+        title: 'Gabimi kryesor në deklarimin e sigurimeve shëndetësore për të vetëpunësuarin ?',
+        description: 'Gabimi kryesor në deklarimin e sigurimeve shëndetësore për të vetëpunësuarin ?',
+        thumbnail: 'thumbnails/e-filling/7.png',
+        category: 'e-filling',
+        keywords: ['sigurime', 'shëndetësore', 'vetëpunësuar']
+    },
+    {
+        id: 'fEdhO2ykLuw',
+        title: 'Nëse pezulloj aktivitetin gjatë vitit, a duhet të dorëzoj bilanc ?',
+        description: 'Nëse pezulloj aktivitetin gjatë vitit, a duhet të dorëzoj bilanc ?',
+        thumbnail: 'thumbnails/e-filling/8.png',
+        category: 'e-filling',
+        keywords: ['pezullim', 'aktivitet', 'bilanc']
+    },
+    {
+        id: 'VxlP4lWfdPI',
+        title: 'Si të regjistrojmë dhe deklarojmë në sistemin e tatimeve nxënësit ose studentët praktikant ?',
+        description: 'Si të regjistrojmë dhe deklarojmë në sistemin e tatimeve nxënësit ose studentët praktikant ?',
+        thumbnail: 'thumbnails/e-filling/9.png',
+        category: 'e-filling',
+        keywords: ['nxënës', 'student', 'praktikant']
+    },
+    {
         id: '82hWX48_FWw',
-        title: 'Deklarimi i punonjësve me leje lindje',
-        description: 'Si bëhet deklarimi në sistemin e tatimeve i punonjësve me leje lindje',
+        title: 'Si bëhet deklarimi në sistemin e tatimeve i punonjësve me leje lindje ?',
+        description: 'Si bëhet deklarimi në sistemin e tatimeve i punonjësve me leje lindje ?',
         thumbnail: 'thumbnails/e-filling/10.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'deklarim', 'leje lindje']
+        keywords: ['deklarim', 'leje lindje', 'punonjës']
     },
     {
         id: 'l6vr2Db0q9Y',
-        title: 'Komunikimi online me administratën tatimore',
-        description: 'Si të komunikojmë online me administratën tatimore',
+        title: 'Si të komunikojmë online me administratën tatimore ?',
+        description: 'Si të komunikojmë online me administratën tatimore ?',
         thumbnail: 'thumbnails/e-filling/11.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'komunikim', 'tatime']
+        keywords: ['komunikim', 'online', 'tatime']
+    },
+    {
+        id: '5NZFGzrh8NI',
+        title: 'Si të shikoj afatet për dorëzimin e deklaratave ?',
+        description: 'Si të shikoj afatet për dorëzimin e deklaratave ?',
+        thumbnail: 'thumbnails/e-filling/12.png',
+        category: 'e-filling',
+        keywords: ['afate', 'dorëzim', 'deklarata']
+    },
+    {
+        id: 'X2N_SnzFSKE',
+        title: 'Si deklarohet tatimi i mbajtur në burim për kontratat në monedhë të huaj ?',
+        description: 'Si deklarohet tatimi i mbajtur në burim për kontratat në monedhë të huaj ?',
+        thumbnail: 'thumbnails/e-filling/13.png',
+        category: 'e-filling',
+        keywords: ['tatim', 'burim', 'monedhë', 'huaj']
+    },
+    {
+        id: 'HnjpmtSWVY0',
+        title: 'Si bëhet regjistrimi i administratorit në sistemin e tatimeve ?',
+        description: 'Si bëhet regjistrimi i administratorit në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/14.png',
+        category: 'e-filling',
+        keywords: ['regjistrim', 'administrator', 'tatime']
+    },
+    {
+        id: '90PmU1Xv-ls',
+        title: 'Si të largoj punonjësit nga sistemi i tatimeve ?',
+        description: 'Si të largoj punonjësit nga sistemi i tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/15.png',
+        category: 'e-filling',
+        keywords: ['largim', 'punonjës', 'tatime']
+    },
+    {
+        id: 'XT1t_0vXggU',
+        title: 'Si bëhet Regjistrimi i punonjësve në sistemin e tatimeve ?',
+        description: 'Si bëhet Regjistrimi i punonjësve në sistemin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/16.png',
+        category: 'e-filling',
+        keywords: ['regjistrim', 'punonjës', 'tatime']
+    },
+    {
+        id: '8QcEZ0szw9U',
+        title: 'Si te ndryshoj passwordin e tatimeve ?',
+        description: 'Si te ndryshoj passwordin e tatimeve ?',
+        thumbnail: 'thumbnails/e-filling/17.png',
+        category: 'e-filling',
+        keywords: ['password', 'ndryshim', 'tatime']
+    },
+    {
+        id: 'Nve905cly6o',
+        title: 'Si të verifikoj nëse biznesi im duhet të dorëzojë bilanc?',
+        description: 'Si të verifikoj nëse biznesi im duhet të dorëzojë bilanc?',
+        thumbnail: 'thumbnails/e-filling/18.png',
+        category: 'e-filling',
+        keywords: ['verifikim', 'biznes', 'bilanc']
+    },
+    {
+        id: '-tNcVeC4xOA',
+        title: 'Si bëhet deklarimi i tatimit të mbajtur në burim ?',
+        description: 'Si bëhet deklarimi i tatimit të mbajtur në burim ?',
+        thumbnail: 'thumbnails/e-filling/19.png',
+        category: 'e-filling',
+        keywords: ['deklarim', 'tatim', 'burim']
     },
     {
         id: 'BVMDTyp6uak',
@@ -717,7 +965,7 @@ const videoData = [
         description: 'Si te shmangim gabimin ne pagesat pas afatit ?',
         thumbnail: 'thumbnails/e-filling/20.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'pagesa', 'afat']
+        keywords: ['pagesa', 'afat', 'gabim']
     },
     {
         id: 'mCdxLZ05ZfA',
@@ -725,7 +973,7 @@ const videoData = [
         description: 'Si të kontrolloj historikun e punësimit të punonjësve ?',
         thumbnail: 'thumbnails/e-filling/21.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'historik', 'punonjës']
+        keywords: ['historik', 'punësim', 'punonjës']
     },
     {
         id: 'tFEuCf6Ruiw',
@@ -733,7 +981,7 @@ const videoData = [
         description: 'Si të kontrollojmë gjendjen e detyrimeve në sistemin e tatimeve',
         thumbnail: 'thumbnails/e-filling/22.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'detyrime', 'tatime']
+        keywords: ['gjendje', 'detyrime', 'tatime']
     },
     {
         id: '7F6zxQ2zBAo',
@@ -741,7 +989,7 @@ const videoData = [
         description: 'Si behet deklarimi i adreses ne sistemin e tatimeve ?',
         thumbnail: 'thumbnails/e-filling/23.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'adresë', 'deklarim']
+        keywords: ['deklarim', 'adresë', 'tatime']
     },
     {
         id: 'B0391KJ9XJI',
@@ -749,7 +997,7 @@ const videoData = [
         description: 'Si të kontrolloj tepricën kreditore në sistemin e Tatimeve ?',
         thumbnail: 'thumbnails/e-filling/24.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'tepricë', 'kreditore']
+        keywords: ['tepricë', 'kreditore', 'tatime']
     },
     {
         id: '4rHwm_SljB4',
@@ -757,7 +1005,7 @@ const videoData = [
         description: 'Deklarimi i Diva per personat me te ardhura mbi 1.2 milion leke te reja ne vit ose te dypunesuar.',
         thumbnail: 'thumbnails/e-filling/25.png',
         category: 'e-filling',
-        keywords: ['e-filling', 'diva', 'deklarim']
+        keywords: ['diva', 'të ardhura', 'dypunësuar']
     },
 
     // FAQ videos (20 videos)
@@ -920,6 +1168,168 @@ const videoData = [
         thumbnail: 'thumbnails/faq/20.png',
         category: 'faq',
         keywords: ['faq', 'tvsh', 'tatim']
+    },
+
+    // Bilanci videos (20 videos)
+    {
+        id: '60jZKH9q_RA',
+        title: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
+        description: 'Si të bëj ndryshimin e adresës se biznesit nga e albania ?',
+        thumbnail: 'thumbnails/e-albania/1.png',
+        category: 'bilanci',
+        keywords: ['ndryshimi', 'adresës', 'biznesit', 'bilanci']
+    },
+    {
+        id: 'rsROpcHbT_Y',
+        title: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania',
+        description: 'Si të shtoj përgjegjësinë tatim i mbajtur në burim për bizneset nga e albania ?',
+        thumbnail: 'thumbnails/e-albania/2.png',
+        category: 'bilanci',
+        keywords: ['tatim', 'bizneset', 'bilanci']
+    },
+    {
+        id: 'TnCy5Qze1pI',
+        title: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
+        description: 'Si të ndryshoj përgjegjësitë tatimore të biznesit nga e-Albania?',
+        thumbnail: 'thumbnails/e-albania/3.png',
+        category: 'bilanci',
+        keywords: ['tatimore', 'biznesit', 'bilanci']
+    },
+    {
+        id: 'nHipbjjsGMM',
+        title: 'Gjenerimi i vërtetimeve për biznesin',
+        description: 'Gjenerimi i vërtetimeve për biznesin',
+        thumbnail: 'thumbnails/e-albania/4.png',
+        category: 'bilanci',
+        keywords: ['vërtetim', 'biznes', 'bilanci']
+    },
+    {
+        id: 'R9-YZqG5ue0',
+        title: 'Aplikimi për leje dhe licenca',
+        description: 'Aplikimi për leje dhe licenca',
+        thumbnail: 'thumbnails/e-albania/5.png',
+        category: 'bilanci',
+        keywords: ['leje', 'licenca', 'bilanci']
+    },
+    {
+        id: 'farGSJaxhoc',
+        title: 'Deklarimi i kontributeve të sigurimeve',
+        description: 'Deklarimi i kontributeve të sigurimeve',
+        thumbnail: 'thumbnails/e-albania/6.png',
+        category: 'bilanci',
+        keywords: ['kontribute', 'sigurime', 'bilanci']
+    },
+    {
+        id: 'TRbIIOoEZbQ',
+        title: 'Ndryshimi i të dhënave të biznesit',
+        description: 'Ndryshimi i të dhënave të biznesit',
+        thumbnail: 'thumbnails/e-albania/7.png',
+        category: 'bilanci',
+        keywords: ['ndryshim', 'biznes', 'bilanci']
+    },
+    {
+        id: 'p2DWTp84Y8o',
+        title: 'Aplikimi për sigurime shoqërore',
+        description: 'Aplikimi për sigurime shoqërore',
+        thumbnail: 'thumbnails/e-albania/8.png',
+        category: 'bilanci',
+        keywords: ['sigurime', 'shoqërore', 'bilanci']
+    },
+    {
+        id: 'swiJ7_cCUVs',
+        title: 'Deklarimi i tatimit mbi fitimin',
+        description: 'Deklarimi i tatimit mbi fitimin',
+        thumbnail: 'thumbnails/e-albania/9.png',
+        category: 'bilanci',
+        keywords: ['tatim', 'fitim', 'bilanci']
+    },
+    {
+        id: 'RS9fHh0E4ZU',
+        title: 'Aplikimi për rimbursim TVSH',
+        description: 'Aplikimi për rimbursim TVSH',
+        thumbnail: 'thumbnails/e-albania/10.png',
+        category: 'bilanci',
+        keywords: ['rimbursim', 'tvsh', 'bilanci']
+    },
+    {
+        id: 'hFg2NT2Wg3I',
+        title: 'Deklarimi i listëpagesave',
+        description: 'Deklarimi i listëpagesave',
+        thumbnail: 'thumbnails/e-albania/11.png',
+        category: 'bilanci',
+        keywords: ['listëpagesa', 'deklarim', 'bilanci']
+    },
+    {
+        id: 'wykIcscHuCA',
+        title: 'Aplikimi për autorizime',
+        description: 'Aplikimi për autorizime',
+        thumbnail: 'thumbnails/e-albania/12.png',
+        category: 'bilanci',
+        keywords: ['autorizim', 'aplikim', 'bilanci']
+    },
+    {
+        id: 'GkuNeCUOrHU',
+        title: 'Deklarimi i bilancit vjetor',
+        description: 'Deklarimi i bilancit vjetor',
+        thumbnail: 'thumbnails/e-albania/13.png',
+        category: 'bilanci',
+        keywords: ['bilanc', 'vjetor', 'deklarim']
+    },
+    {
+        id: 'Ak7Wvs3xUbs',
+        title: 'Aplikimi për certifikata biznesi',
+        description: 'Aplikimi për certifikata biznesi',
+        thumbnail: 'thumbnails/e-albania/14.png',
+        category: 'bilanci',
+        keywords: ['certifikata', 'biznes', 'bilanci']
+    },
+    {
+        id: 'ybt_J0JZEvg',
+        title: 'Si të ndryshojmë veprimtarinë e biznesit nga e albania ?',
+        description: 'Si të ndryshojmë veprimtarinë e biznesit nga e albania ?',
+        thumbnail: 'thumbnails/e-albania/15.png',
+        category: 'bilanci',
+        keywords: ['veprimtari', 'biznes', 'bilanci']
+    },
+    {
+        id: 'Be0QhWTDE5I',
+        title: 'Si të pajisemi me kartë shëndeti online nga e-Albania?',
+        description: 'Si të pajisemi me kartë shëndeti online nga e-Albania?',
+        thumbnail: 'thumbnails/e-albania/16.png',
+        category: 'bilanci',
+        keywords: ['kartë', 'shëndeti', 'bilanci']
+    },
+    {
+        id: '7OuUMfVOdHE',
+        title: 'Aplikimi për leje ndërtimi për biznesin',
+        description: 'Aplikimi për leje ndërtimi për biznesin',
+        thumbnail: 'thumbnails/e-albania/17.png',
+        category: 'bilanci',
+        keywords: ['leje', 'ndërtimi', 'bilanci']
+    },
+    {
+        id: 'Y8zqHvDSc2w',
+        title: 'Aplikimi për leje ndërtimi për biznesin',
+        description: 'Aplikimi për leje ndërtimi për biznesin',
+        thumbnail: 'thumbnails/e-albania/18.png',
+        category: 'bilanci',
+        keywords: ['leje', 'ndërtimi', 'bilanci']
+    },
+    {
+        id: 'woA-1tcLslg',
+        title: 'Aplikimi për leje ndërtimi për biznesin',
+        description: 'Aplikimi për leje ndërtimi për biznesin',
+        thumbnail: 'thumbnails/e-albania/19.png',
+        category: 'bilanci',
+        keywords: ['leje', 'ndërtimi', 'bilanci']
+    },
+    {
+        id: 'YSASpXSzINw',
+        title: 'Aplikimi për hapje të degës së re të biznesit',
+        description: 'Aplikimi për hapje të degës së re të biznesit',
+        thumbnail: 'thumbnails/e-albania/20.png',
+        category: 'bilanci',
+        keywords: ['degë', 'biznes', 'bilanci']
     }
 ];
 
